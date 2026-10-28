@@ -1,0 +1,16 @@
+
+VERTICES
+A
+B
+C
+D
+E
+F
+
+ARISTAS
+A B
+A E
+B F
+C D
+D E
+E F
