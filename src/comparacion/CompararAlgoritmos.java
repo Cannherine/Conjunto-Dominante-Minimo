@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import algoritmo.DominanteBacktracking;
+import algoritmo.DominanteGenetico;
 import algoritmo.DominanteGoloso;
 import negocio.Grafo;
 import negocio.Vertice;
@@ -23,6 +24,13 @@ public class CompararAlgoritmos {
 
 	        return medirTiempo(grafo, algoritmo::resolver);
 	    }
+	    
+	    public ResultadoAlgoritmo medirGenetico(Grafo grafo) {
+	        
+	        DominanteGenetico algoritmo = new DominanteGenetico();
+	        
+	        return medirTiempo(grafo, algoritmo::resolver);
+	    }
 
 	    public long calcularPromedio(Grafo grafo, Function<Grafo, Set<Vertice>> resolver, int repeticiones) {
 
@@ -32,7 +40,7 @@ public class CompararAlgoritmos {
 	            throw new IllegalArgumentException("Las repeticiones deben ser positivas");
 	        }
 
-	        // Calentamiento de la JVM
+	        
 	        for (int i = 0; i < 5; i++) {
 	            resolver.apply(grafo);
 	        }

@@ -68,12 +68,18 @@ public void compararCaminosDistintosTamaños() {
         ResultadoAlgoritmo backtracking =  comparador.medirBacktracking(grafo);
 
         ResultadoAlgoritmo goloso = comparador.medirGoloso(grafo);
+        
+        ResultadoAlgoritmo genetico = comparador.medirGenetico(grafo);
 
         assertTrue(ConjuntoDominante.esDominante(
                 grafo, backtracking.getSolucion()));
 
         assertTrue(ConjuntoDominante.esDominante(
                 grafo, goloso.getSolucion()));
+        
+        assertTrue(ConjuntoDominante.esDominante(
+                grafo, genetico.getSolucion()));
+
 
         System.out.println("Vertices: " + n);
         System.out.println("Backtracking: "
@@ -81,6 +87,10 @@ public void compararCaminosDistintosTamaños() {
                 + backtracking.getTiempoNanosegundos() + " ns");
 
         System.out.println("Goloso: "
+                + goloso.getTamaño() + " vertices, "
+                + goloso.getTiempoNanosegundos() + " ns");
+        
+        System.out.println("Genetico: "
                 + goloso.getTamaño() + " vertices, "
                 + goloso.getTiempoNanosegundos() + " ns");
 

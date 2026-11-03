@@ -34,6 +34,8 @@ import negocio.Vertice;
 import comparacion.CompararAlgoritmos;
 import comparacion.ResultadoAlgoritmo;
 
+
+
 public class VentanaPrincipal extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -64,6 +66,11 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lblSolucionGoloso;
 	private JLabel lblTamGoloso;
 	private JLabel lblTiempoGoloso;
+	
+	private JButton btnGenetico;
+	private JLabel lblSolucionGenetico;
+	private JLabel lblTamGenetico;
+	private JLabel lblTiempoGenetico;
 
 	/**
 	 * Launch the application.
@@ -173,6 +180,15 @@ public class VentanaPrincipal extends JFrame {
 		panel.add(lblSolucionGoloso);
 		panel.add(lblTamGoloso);
 		panel.add(lblTiempoGoloso);
+		
+		btnGenetico = new JButton("Ejecutar Genético");
+		panel.add(btnGenetico);
+		lblSolucionGenetico = new JLabel("Solución: -");
+		lblTamGenetico = new JLabel("Tamaño: -");
+		lblTiempoGenetico = new JLabel("Tiempo: -");
+		panel.add(lblSolucionGenetico);
+		panel.add(lblTamGenetico);
+		panel.add(lblTiempoGenetico);
 
 		return panel;
 	}
@@ -185,6 +201,7 @@ public class VentanaPrincipal extends JFrame {
 		btnEliminarArista.addActionListener(e -> eliminarArista());
 		btnBacktracking.addActionListener(e -> ejecutarBacktracking());
 		btnGoloso.addActionListener(e -> ejecutarGoloso());
+		btnGenetico.addActionListener(e -> ejecutarGenetico());
 	}
 
 	private void cargarGrafo() {
@@ -369,6 +386,21 @@ public class VentanaPrincipal extends JFrame {
 		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
 		mostrarResultado(solucion, tiempoMs, lblSolucionGoloso, lblTamGoloso, lblTiempoGoloso, Color.GREEN);
 	}
+	
+	private void ejecutarGenetico() {
+		if (grafo.cantidadVertices() == 0) {
+			mostrarMensaje("Primero tenés que agregar vértices.");
+			return;
+		}
+
+		ResultadoAlgoritmo resultado = comparador.medirGenetico(grafo);
+
+		Set<Vertice> solucion = resultado.getSolucion();
+
+		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
+       
+		mostrarResultado(solucion, tiempoMs, lblSolucionGenetico, lblTamGenetico, lblTiempoGenetico, Color.ORANGE);
+	}
 
 	private void mostrarResultado(Set<Vertice> solucion, double tiempoMs, JLabel lblSolucion, JLabel lblTam,
 			JLabel lblTiempo, Color color) {
@@ -391,11 +423,18 @@ public class VentanaPrincipal extends JFrame {
 		lblSolucionBacktracking.setText("Solución: -");
 		lblTamBacktracking.setText("Tamaño: -");
 		lblTiempoBacktracking.setText("Tiempo: -");
-		lblSolucionGoloso.setText("Solución: -");
+		
+        lblSolucionGoloso.setText("Solución: -");
 		lblTamGoloso.setText("Tamaño: -");
 		lblTiempoGoloso.setText("Tiempo: -");
+        
+        
+        //if(lblSolucionGenetico != null) {
+            lblSolucionGenetico.setText("Solución: -");
+            lblTamGenetico.setText("Tamaño: -");
+            lblTiempoGenetico.setText("Tiempo: -");
+       // }
 	}
-
 	private void mostrarMensaje(String mensaje) {
 		JOptionPane.showMessageDialog(this, mensaje);
 	}
