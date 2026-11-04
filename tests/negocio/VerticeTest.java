@@ -1,4 +1,4 @@
-package test;
+package negocio;
 import static org.junit.Assert.*;
 import org.junit.Test;
 

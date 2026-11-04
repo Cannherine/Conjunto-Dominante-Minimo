@@ -1,4 +1,4 @@
-package test;
+package comparacion;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
