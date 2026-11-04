@@ -84,9 +84,7 @@ public class VentanaPrincipal extends JFrame {
 	private TestEstres testEstres;
 	private SwingWorker<Void, String> trabajadorEstres;
 
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -113,6 +111,7 @@ public class VentanaPrincipal extends JFrame {
 
 		grafoPanel = new GrafoPanel(grafo);
 		grafoPanel.setAlHacerClickEnEspacioVacio(this::agregarVerticeEnPosicion);
+		grafoPanel.setAlSeleccionarDosVertices(this::gestionarArista);
 		contentPane.add(grafoPanel, BorderLayout.CENTER);
 
 		JScrollPane scrollResultados = new JScrollPane(crearPanelResultados());
@@ -277,16 +276,12 @@ public class VentanaPrincipal extends JFrame {
 		}
 	}
 
-	/**
-	 * Se ejecuta al hacer click en un espacio vacio del grafo: pide el nombre y
-	 * crea el vertice justo en el punto donde se hizo click.
-	 */
 	private void agregarVerticeEnPosicion(Point centro) {
 		while (true) {
 			String ingresado = JOptionPane.showInputDialog(this, "Nombre del nuevo vértice:", "Nuevo vértice",
 					JOptionPane.QUESTION_MESSAGE);
 			if (ingresado == null) {
-				return; // el usuario canceló
+				return;
 			}
 
 			String nombre = ingresado.trim().toUpperCase();
@@ -305,8 +300,6 @@ public class VentanaPrincipal extends JFrame {
 			comboOrigen.addItem(nombre);
 			comboDestino.addItem(nombre);
 
-			// El grafo cambió, así que los resultados anteriores ya no valen.
-			// No se llama a actualizarVistaGrafo() para no reubicar todos los vértices.
 			limpiarResultados();
 			grafoPanel.limpiarSolucion();
 			grafoPanel.colocarVertice(vertice, centro);
@@ -321,8 +314,7 @@ public class VentanaPrincipal extends JFrame {
 			return;
 		}
 
-		int respuesta = JOptionPane.showConfirmDialog(this, "¿Querés eliminar el vértice " + nombre + "?",
-				"Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+		int respuesta = JOptionPane.showConfirmDialog(this, "¿Querés eliminar el vértice " + nombre + "?","Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 		if (respuesta != JOptionPane.YES_OPTION) {
 			return;
 		}
@@ -357,6 +349,70 @@ public class VentanaPrincipal extends JFrame {
 		} catch (IllegalArgumentException ex) {
 			mostrarError(ex.getMessage());
 		}
+	}
+
+	/**
+	 * Se ejecuta al elegir dos vértices con el click derecho: si ya están
+	 * conectados propone eliminar la arista, y si no, propone crearla.
+	 */
+	private void gestionarArista(Vertice origen, Vertice destino) {
+		if (grafo.existeArista(origen, destino)) {
+			proponerEliminarArista(origen, destino);
+		} else {
+			proponerCrearArista(origen, destino);
+		}
+	}
+
+	private void proponerCrearArista(Vertice origen, Vertice destino) {
+		int respuesta = JOptionPane.showConfirmDialog(this,
+				"¿Querés crear una arista entre " + origen + " y " + destino + "?", "Crear arista",
+				JOptionPane.YES_NO_OPTION);
+		if (respuesta != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		if (!grafo.agregarArista(origen, destino)) {
+			mostrarError("No se pudo agregar la arista.");
+			return;
+		}
+
+		modeloAristas.addElement(nombreArista(origen, destino));
+
+		// El grafo cambió: se borran los resultados viejos, pero NO se reubican los vértices
+		limpiarResultados();
+		grafoPanel.limpiarSolucion();
+	}
+
+	/**
+	 * Igual que el botón "Eliminar arista", pero para una arista elegida con el
+	 * click derecho sobre sus dos vértices.
+	 */
+	private void proponerEliminarArista(Vertice origen, Vertice destino) {
+		String arista = nombreArista(origen, destino);
+
+		int respuesta = JOptionPane.showConfirmDialog(this, "¿Querés eliminar la arista " + arista + "?",
+				"Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+		if (respuesta != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		if (!grafo.eliminarArista(origen, destino)) {
+			mostrarError("No se pudo eliminar la arista.");
+			return;
+		}
+
+		modeloAristas.removeElement(arista);
+
+		// El grafo cambió: se borran los resultados viejos, pero NO se reubican los vértices
+		limpiarResultados();
+		grafoPanel.limpiarSolucion();
+	}
+
+	// Mismo formato que actualizarListas(): el nombre menor primero
+	private String nombreArista(Vertice a, Vertice b) {
+		String x = a.getNombre();
+		String y = b.getNombre();
+		return x.compareTo(y) < 0 ? x + " - " + y : y + " - " + x;
 	}
 
 	private void eliminarArista() {
@@ -481,7 +537,7 @@ public class VentanaPrincipal extends JFrame {
 	        @Override
 	        protected Void doInBackground() {
 
-	            prueba.ejecutar(5, 100, (vertices, resultado) -> {
+	            prueba.ejecutar(5, 35, (vertices, resultado) -> {
 
 	                double tiempoMs =
 	                        resultado.getTiempoNanosegundos() / 1_000_000.0;
@@ -558,11 +614,10 @@ public class VentanaPrincipal extends JFrame {
 		lblTiempoGoloso.setText("Tiempo: -");
         
         
-        //if(lblSolucionGenetico != null) {
-            lblSolucionGenetico.setText("Solución: -");
-            lblTamGenetico.setText("Tamaño: -");
-            lblTiempoGenetico.setText("Tiempo: -");
-       // }
+        lblSolucionGenetico.setText("Solución: -");
+        lblTamGenetico.setText("Tamaño: -");
+        lblTiempoGenetico.setText("Tiempo: -");
+
 	}
 	private void mostrarMensaje(String mensaje) {
 		JOptionPane.showMessageDialog(this, mensaje);

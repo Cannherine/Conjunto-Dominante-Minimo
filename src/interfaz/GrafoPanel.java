@@ -1,5 +1,6 @@
 package interfaz;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.swing.JPanel;
@@ -38,6 +40,10 @@ public class GrafoPanel extends JPanel {
     private Color colorSolucion = Color.GREEN;
     private Consumer<Point> alHacerClickEnEspacioVacio;
     private Point puntoPresionado;
+    private BiConsumer<Vertice, Vertice> alSeleccionarDosVertices;
+    private Point puntoPresionadoDerecho;
+    private Vertice aristaOrigen;
+    private Vertice aristaDestino;
 
     public GrafoPanel(Grafo grafo) {
         this.grafo = grafo;
@@ -49,12 +55,17 @@ public class GrafoPanel extends JPanel {
         MouseAdapter mouse = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                verticeSeleccionado = buscarVertice(e.getX(), e.getY());
-                // Solo cuenta como posible "click para crear" si fue con el boton
-                // izquierdo y sobre un espacio vacio (no sobre un vertice)
-                puntoPresionado = (verticeSeleccionado == null && SwingUtilities.isLeftMouseButton(e))
-                        ? e.getPoint()
-                        : null;
+                boolean izquierdo = SwingUtilities.isLeftMouseButton(e);
+                Vertice bajoElMouse = buscarVertice(e.getX(), e.getY());
+
+                // Solo el boton izquierdo arrastra vertices
+                verticeSeleccionado = izquierdo ? bajoElMouse : null;
+
+                // Posible "click para crear un vertice": izquierdo sobre un espacio vacio
+                puntoPresionado = (izquierdo && bajoElMouse == null) ? e.getPoint() : null;
+
+                // Posible click derecho para elegir los vertices de una arista
+                puntoPresionadoDerecho = SwingUtilities.isRightMouseButton(e) ? e.getPoint() : null;
             }
 
             @Override
@@ -82,6 +93,12 @@ public class GrafoPanel extends JPanel {
                         && inicio.distance(e.getPoint()) <= UMBRAL_CLICK && hayLugarLibre(inicio)) {
                     alHacerClickEnEspacioVacio.accept(inicio);
                 }
+
+                Point inicioDerecho = puntoPresionadoDerecho;
+                puntoPresionadoDerecho = null;
+                if (inicioDerecho != null && inicioDerecho.distance(e.getPoint()) <= UMBRAL_CLICK) {
+                    procesarClickDerecho(inicioDerecho);
+                }
             }
         };
 
@@ -93,6 +110,8 @@ public class GrafoPanel extends JPanel {
         this.grafo = nuevoGrafo;
         posiciones.clear();
         verticeSeleccionado = null;
+        aristaOrigen = null;
+        aristaDestino = null;
         limpiarSolucion();
     }
 
@@ -113,6 +132,51 @@ public class GrafoPanel extends JPanel {
         limitarPosicion(posicion);
         posiciones.put(vertice, posicion);
         repaint();
+    }
+
+    /**
+     * Registra la accion a ejecutar cuando el usuario elige dos vertices distintos
+     * con el click derecho (primero el origen y despues el destino).
+     */
+    public void setAlSeleccionarDosVertices(BiConsumer<Vertice, Vertice> accion) {
+        this.alSeleccionarDosVertices = accion;
+    }
+
+    // Click derecho: 1) marca el primer vertice, 2) al marcar otro distinto avisa a quien
+    // escucha. Click derecho sobre el mismo vertice o en un espacio vacio cancela.
+    private void procesarClickDerecho(Point punto) {
+        Vertice vertice = buscarVertice(punto.x, punto.y);
+
+        // Si el vertice marcado antes ya no existe (se elimino), se descarta
+        if (aristaOrigen != null && !grafo.obtenerVertices().contains(aristaOrigen)) {
+            aristaOrigen = null;
+        }
+
+        if (vertice == null || vertice.equals(aristaOrigen)) {
+            aristaOrigen = null;
+            repaint();
+            return;
+        }
+
+        if (aristaOrigen == null) {
+            aristaOrigen = vertice;
+            repaint();
+            return;
+        }
+
+        // Segundo vertice: los dos quedan resaltados mientras se le pregunta al usuario
+        Vertice origen = aristaOrigen;
+        aristaDestino = vertice;
+        repaint();
+        try {
+            if (alSeleccionarDosVertices != null) {
+                alSeleccionarDosVertices.accept(origen, vertice);
+            }
+        } finally {
+            aristaOrigen = null;
+            aristaDestino = null;
+            repaint();
+        }
     }
 
     // Evita crear un vertice encimado sobre otro ya existente
@@ -300,6 +364,12 @@ public class GrafoPanel extends JPanel {
             g2.fillOval(x, y, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
             g2.setColor(Color.BLUE);
             g2.drawOval(x, y, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
+            if (vertice.equals(aristaOrigen) || vertice.equals(aristaDestino)) {
+                g2.setColor(Color.RED);
+                g2.setStroke(new BasicStroke(3f));
+                g2.drawOval(x, y, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
+                g2.setStroke(new BasicStroke(1f));
+            }
             g2.setColor(Color.BLACK);
             g2.drawString(vertice.getNombre(), x + 15, y + 25);
         }
