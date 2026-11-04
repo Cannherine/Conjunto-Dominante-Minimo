@@ -2,6 +2,7 @@ package interfaz;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -41,6 +42,7 @@ public class GrafoPanel extends JPanel {
 	private static final double ATRACCION = 0.015;
 	private static final double DISTANCIA_IDEAL = 110;
 	private static final int UMBRAL_CLICK = 5;
+	private static final int SEPARACION_PUNTOS = 25;
 
 	private Grafo grafo;
 	private final Map<Vertice, Point> posiciones = new HashMap<>();
@@ -58,7 +60,7 @@ public class GrafoPanel extends JPanel {
 
 	public GrafoPanel(Grafo grafo) {
 		this.grafo = grafo;
-		setBackground(Color.WHITE);
+		setBackground(EstiloInterfaz.LIENZO);
 		configurarMouse();
 	}
 
@@ -77,7 +79,7 @@ public class GrafoPanel extends JPanel {
 
 				puntoPresionadoDerecho = (modoActual == ModoEdicion.ARISTA && SwingUtilities.isRightMouseButton(e))
 						? e.getPoint()
-								: null;
+						: null;
 			}
 
 			@Override
@@ -121,7 +123,6 @@ public class GrafoPanel extends JPanel {
 				Point inicio = puntoPresionado;
 				puntoPresionado = null;
 
-				// Es un click (y no un arrastre) si el mouse casi no se movio
 				if (inicio != null && alHacerClickEnEspacioVacio != null
 						&& inicio.distance(e.getPoint()) <= UMBRAL_CLICK && hayLugarLibre(inicio)) {
 					alHacerClickEnEspacioVacio.accept(inicio);
@@ -386,6 +387,8 @@ public class GrafoPanel extends JPanel {
 		Graphics2D g2 = (Graphics2D) g.create();
 		try {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			dibujarFondo(g2);
 			dibujarAristas(g2);
 			dibujarVertices(g2);
 		} finally {
@@ -393,20 +396,43 @@ public class GrafoPanel extends JPanel {
 		}
 	}
 
+	private void dibujarFondo(Graphics2D g2) {
+		g2.setColor(EstiloInterfaz.PUNTOS_LIENZO);
+		for (int x = SEPARACION_PUNTOS; x < getWidth(); x += SEPARACION_PUNTOS) {
+			for (int y = SEPARACION_PUNTOS; y < getHeight(); y += SEPARACION_PUNTOS) {
+				g2.fillOval(x - 1, y - 1, 3, 3);
+			}
+		}
+	}
+
 	private void dibujarAristas(Graphics2D g2) {
-		g2.setColor(Color.GRAY);
 		for (Vertice origen : grafo.obtenerVertices()) {
 			Point p1 = posiciones.get(origen);
 			for (Vertice destino : grafo.obtenerVecinos(origen)) {
 				Point p2 = posiciones.get(destino);
-				if (p1 != null && p2 != null) {
-					g2.drawLine(p1.x + RADIO_VERTICE, p1.y + RADIO_VERTICE, p2.x + RADIO_VERTICE, p2.y + RADIO_VERTICE);
+				if (p1 == null || p2 == null || origen.getNombre().compareTo(destino.getNombre()) > 0) {
+					continue; // cada arista se dibuja una sola vez
 				}
+
+				boolean dominada = solucionActual != null
+						&& (solucionActual.contains(origen) || solucionActual.contains(destino));
+				if (dominada) {
+					g2.setColor(
+							new Color(colorSolucion.getRed(), colorSolucion.getGreen(), colorSolucion.getBlue(), 150));
+					g2.setStroke(new BasicStroke(3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+				} else {
+					g2.setColor(EstiloInterfaz.ARISTA);
+					g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+				}
+				g2.drawLine(p1.x + RADIO_VERTICE, p1.y + RADIO_VERTICE, p2.x + RADIO_VERTICE, p2.y + RADIO_VERTICE);
 			}
 		}
 	}
 
 	private void dibujarVertices(Graphics2D g2) {
+		g2.setFont(EstiloInterfaz.FUENTE_VERTICE);
+		FontMetrics medidas = g2.getFontMetrics();
+
 		for (Vertice vertice : grafo.obtenerVertices()) {
 			Point posicion = posiciones.get(vertice);
 			if (posicion == null) {
@@ -415,23 +441,29 @@ public class GrafoPanel extends JPanel {
 
 			int x = posicion.x;
 			int y = posicion.y;
-			if (solucionActual != null && solucionActual.contains(vertice)) {
-				g2.setColor(colorSolucion);
-			} else {
-				g2.setColor(new Color(173, 216, 230));
+			boolean enSolucion = solucionActual != null && solucionActual.contains(vertice);
+
+			g2.setColor(new Color(0, 0, 0, 30)); // sombra
+			g2.fillOval(x + 2, y + 3, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
+
+			g2.setColor(enSolucion ? colorSolucion : EstiloInterfaz.VERTICE_RELLENO);
+			g2.fillOval(x, y, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
+
+			g2.setStroke(new BasicStroke(2f));
+			g2.setColor(enSolucion ? colorSolucion.darker() : EstiloInterfaz.VERTICE_BORDE);
+			g2.drawOval(x, y, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
+
+			if (vertice.equals(aristaOrigen) || vertice.equals(aristaDestino)) {
+				g2.setColor(EstiloInterfaz.SELECCION);
+				g2.setStroke(new BasicStroke(3f));
+				g2.drawOval(x - 3, y - 3, DIAMETRO_VERTICE + 6, DIAMETRO_VERTICE + 6);
 			}
 
-			g2.fillOval(x, y, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
-			g2.setColor(Color.BLUE);
-			g2.drawOval(x, y, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
-			if (vertice.equals(aristaOrigen) || vertice.equals(aristaDestino)) {
-				g2.setColor(Color.RED);
-				g2.setStroke(new BasicStroke(3f));
-				g2.drawOval(x, y, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
-				g2.setStroke(new BasicStroke(1f));
-			}
-			g2.setColor(Color.BLACK);
-			g2.drawString(vertice.getNombre(), x + 15, y + 25);
+			String nombre = vertice.getNombre();
+			int textoX = x + (DIAMETRO_VERTICE - medidas.stringWidth(nombre)) / 2;
+			int textoY = y + (DIAMETRO_VERTICE + medidas.getAscent() - medidas.getDescent()) / 2;
+			g2.setColor(enSolucion ? Color.WHITE : EstiloInterfaz.TEXTO);
+			g2.drawString(nombre, textoX, textoY);
 		}
 	}
 }

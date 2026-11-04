@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -81,6 +82,7 @@ public class VentanaPrincipal extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					EstiloInterfaz.aplicarGlobal();
 					VentanaPrincipal frame = new VentanaPrincipal();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -93,10 +95,12 @@ public class VentanaPrincipal extends JFrame {
 	public VentanaPrincipal() {
 		setTitle("Conjunto Dominante Mínimo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1100, 700);
+		setSize(1100, 700);
+		setLocationRelativeTo(null);
 
 		JPanel contentPane = new JPanel(new BorderLayout());
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setBorder(new EmptyBorder(8, 8, 8, 8));
+		contentPane.setBackground(EstiloInterfaz.FONDO);
 		setContentPane(contentPane);
 
 		contentPane.add(crearPanelControles(), BorderLayout.WEST);
@@ -108,6 +112,7 @@ public class VentanaPrincipal extends JFrame {
 		grafoPanel.setAlSeleccionarAristaParaEliminar(this::proponerEliminarArista);
 		JPanel panelEditor = new JPanel(new BorderLayout());
 		JPanel barraHerramientas = new JPanel();
+		barraHerramientas.setBackground(EstiloInterfaz.FONDO);
 
 		JToggleButton btnVertice = new JToggleButton("○ Vértice");
 		JToggleButton btnArista = new JToggleButton("— Arista");
@@ -162,100 +167,115 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	private JPanel crearPanelControles() {
-		JPanel panel = new JPanel(new GridLayout(0, 1, 5, 8));
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setPreferredSize(new Dimension(230, 0));
-		panel.setBackground(new Color(220, 235, 250));
+		panel.setBackground(EstiloInterfaz.FONDO);
 
-		btnCargarGrafo = new JButton("Cargar archivo (TXT/JSON)");
-		panel.add(btnCargarGrafo);
+		JPanel seccionArchivo = EstiloInterfaz.crearSeccion("Archivo");
+		btnCargarGrafo = EstiloInterfaz.crearBoton("Cargar archivo (TXT/JSON)", EstiloInterfaz.PRIMARIO);
+		EstiloInterfaz.agregarFila(seccionArchivo, btnCargarGrafo);
 
-		panel.add(new JLabel("Nombre del vértice:"));
+		JPanel seccionVertices = EstiloInterfaz.crearSeccion("Vértices");
 		txtVertice = new JTextField();
-		panel.add(txtVertice);
-
-		btnAgregarVertice = new JButton("Agregar vértice");
-		panel.add(btnAgregarVertice);
-
-		panel.add(new JLabel("Vértices agregados:"));
+		txtVertice.setToolTipText("Nombre del vértice");
+		EstiloInterfaz.agregarFila(seccionVertices, txtVertice);
+		btnAgregarVertice = EstiloInterfaz.crearBoton("Agregar vértice", EstiloInterfaz.PRIMARIO);
+		EstiloInterfaz.agregarFila(seccionVertices, btnAgregarVertice);
 		modeloVertices = new DefaultListModel<>();
 		listaVertices = new JList<>(modeloVertices);
-		panel.add(new JScrollPane(listaVertices));
+		EstiloInterfaz.agregarFila(seccionVertices, crearListaConScroll(listaVertices));
+		btnEliminarVertice = EstiloInterfaz.crearBoton("Eliminar vértice", EstiloInterfaz.PELIGRO);
+		EstiloInterfaz.agregarFila(seccionVertices, btnEliminarVertice);
 
-		btnEliminarVertice = new JButton("Eliminar vértice");
-		panel.add(btnEliminarVertice);
-
-		panel.add(new JLabel("Agregar una arista:"));
-		panel.add(new JLabel("Vértice origen:"));
+		JPanel seccionAristas = EstiloInterfaz.crearSeccion("Aristas");
 		comboOrigen = new JComboBox<>();
-		panel.add(comboOrigen);
-
-		panel.add(new JLabel("Vértice destino:"));
+		comboOrigen.setToolTipText("Vértice origen");
 		comboDestino = new JComboBox<>();
-		panel.add(comboDestino);
-
-		btnAgregarArista = new JButton("Agregar arista");
-		panel.add(btnAgregarArista);
-
-		panel.add(new JLabel("Aristas agregadas:"));
+		comboDestino.setToolTipText("Vértice destino");
+		JPanel extremos = new JPanel(new GridLayout(1, 2, 6, 0));
+		extremos.setBackground(EstiloInterfaz.TARJETA);
+		extremos.add(comboOrigen);
+		extremos.add(comboDestino);
+		EstiloInterfaz.agregarFila(seccionAristas, extremos);
+		btnAgregarArista = EstiloInterfaz.crearBoton("Agregar arista", EstiloInterfaz.PRIMARIO);
+		EstiloInterfaz.agregarFila(seccionAristas, btnAgregarArista);
 		modeloAristas = new DefaultListModel<>();
 		listaAristas = new JList<>(modeloAristas);
-		panel.add(new JScrollPane(listaAristas));
+		EstiloInterfaz.agregarFila(seccionAristas, crearListaConScroll(listaAristas));
+		btnEliminarArista = EstiloInterfaz.crearBoton("Eliminar arista", EstiloInterfaz.PELIGRO);
+		EstiloInterfaz.agregarFila(seccionAristas, btnEliminarArista);
 
-		btnEliminarArista = new JButton("Eliminar arista");
-		panel.add(btnEliminarArista);
-
+		panel.add(seccionArchivo);
+		panel.add(Box.createVerticalStrut(8));
+		panel.add(seccionVertices);
+		panel.add(Box.createVerticalStrut(8));
+		panel.add(seccionAristas);
 		return panel;
+	}
+
+	private JScrollPane crearListaConScroll(JList<String> lista) {
+		JScrollPane scroll = new JScrollPane(lista);
+		scroll.setPreferredSize(new Dimension(0, 75));
+		return scroll;
 	}
 
 	private JPanel crearPanelResultados() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setPreferredSize(new Dimension(250, 0));
-		panel.setBackground(new Color(235, 225, 245));
+		panel.setBackground(EstiloInterfaz.FONDO);
 
-		panel.add(new JLabel("RESULTADOS"));
-
-		btnBacktracking = new JButton("Ejecutar Backtracking");
-		panel.add(btnBacktracking);
+		JPanel seccionBacktracking = EstiloInterfaz.crearSeccion("Backtracking");
+		btnBacktracking = EstiloInterfaz.crearBoton("Ejecutar Backtracking", EstiloInterfaz.BACKTRACKING);
 		lblSolucionBacktracking = new JLabel("Solución: -");
 		lblTamBacktracking = new JLabel("Tamaño: -");
 		lblTiempoBacktracking = new JLabel("Tiempo: -");
-		panel.add(lblSolucionBacktracking);
-		panel.add(lblTamBacktracking);
-		panel.add(lblTiempoBacktracking);
+		agregarAlgoritmo(seccionBacktracking, btnBacktracking, lblSolucionBacktracking, lblTamBacktracking,
+				lblTiempoBacktracking);
 
-		btnGoloso = new JButton("Ejecutar Goloso");
-		panel.add(btnGoloso);
+		JPanel seccionGoloso = EstiloInterfaz.crearSeccion("Goloso");
+		btnGoloso = EstiloInterfaz.crearBoton("Ejecutar Goloso", EstiloInterfaz.GOLOSO);
 		lblSolucionGoloso = new JLabel("Solución: -");
 		lblTamGoloso = new JLabel("Tamaño: -");
 		lblTiempoGoloso = new JLabel("Tiempo: -");
-		panel.add(lblSolucionGoloso);
-		panel.add(lblTamGoloso);
-		panel.add(lblTiempoGoloso);
+		agregarAlgoritmo(seccionGoloso, btnGoloso, lblSolucionGoloso, lblTamGoloso, lblTiempoGoloso);
 
-		btnGenetico = new JButton("Ejecutar Genético");
-		panel.add(btnGenetico);
+		JPanel seccionGenetico = EstiloInterfaz.crearSeccion("Genético");
+		btnGenetico = EstiloInterfaz.crearBoton("Ejecutar Genético", EstiloInterfaz.GENETICO);
 		lblSolucionGenetico = new JLabel("Solución: -");
 		lblTamGenetico = new JLabel("Tamaño: -");
 		lblTiempoGenetico = new JLabel("Tiempo: -");
-		panel.add(lblSolucionGenetico);
-		panel.add(lblTamGenetico);
-		panel.add(lblTiempoGenetico);
-		panel.add(new JLabel("TEST DE STRESS"));
+		agregarAlgoritmo(seccionGenetico, btnGenetico, lblSolucionGenetico, lblTamGenetico, lblTiempoGenetico);
 
-		btnIniciarStress = new JButton("Iniciar test de stress");
-		panel.add(btnIniciarStress);
-
-		btnDetenerStress = new JButton("Detener test");
+		JPanel seccionStress = EstiloInterfaz.crearSeccion("Test de stress");
+		btnIniciarStress = EstiloInterfaz.crearBoton("Iniciar test de stress", EstiloInterfaz.PRIMARIO);
+		EstiloInterfaz.agregarFila(seccionStress, btnIniciarStress);
+		btnDetenerStress = EstiloInterfaz.crearBoton("Detener test", EstiloInterfaz.PELIGRO);
 		btnDetenerStress.setEnabled(false);
-		panel.add(btnDetenerStress);
+		EstiloInterfaz.agregarFila(seccionStress, btnDetenerStress);
 
 		areaResultadosStress = new JTextArea();
 		areaResultadosStress.setEditable(false);
-
 		JScrollPane scrollStress = new JScrollPane(areaResultadosStress);
-		panel.add(scrollStress);
+		scrollStress.setPreferredSize(new Dimension(0, 120));
+		EstiloInterfaz.agregarFila(seccionStress, scrollStress);
+
+		panel.add(seccionBacktracking);
+		panel.add(Box.createVerticalStrut(8));
+		panel.add(seccionGoloso);
+		panel.add(Box.createVerticalStrut(8));
+		panel.add(seccionGenetico);
+		panel.add(Box.createVerticalStrut(8));
+		panel.add(seccionStress);
 		return panel;
+	}
+
+	private void agregarAlgoritmo(JPanel seccion, JButton boton, JLabel solucion, JLabel tamanio, JLabel tiempo) {
+		EstiloInterfaz.agregarFila(seccion, boton);
+		EstiloInterfaz.agregarFila(seccion, solucion);
+		EstiloInterfaz.agregarFila(seccion, tamanio);
+		EstiloInterfaz.agregarFila(seccion, tiempo);
 	}
 
 	private void configurarEventos() {
@@ -541,7 +561,7 @@ public class VentanaPrincipal extends JFrame {
 		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
 
 		mostrarResultado(solucion, tiempoMs, lblSolucionBacktracking, lblTamBacktracking, lblTiempoBacktracking,
-				Color.YELLOW);
+				EstiloInterfaz.BACKTRACKING);
 	}
 
 	private void ejecutarGoloso() {
@@ -555,7 +575,7 @@ public class VentanaPrincipal extends JFrame {
 		Set<Vertice> solucion = resultado.getSolucion();
 
 		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
-		mostrarResultado(solucion, tiempoMs, lblSolucionGoloso, lblTamGoloso, lblTiempoGoloso, Color.GREEN);
+		mostrarResultado(solucion, tiempoMs, lblSolucionGoloso, lblTamGoloso, lblTiempoGoloso, EstiloInterfaz.GOLOSO);
 	}
 
 	private void ejecutarGenetico() {
@@ -570,7 +590,8 @@ public class VentanaPrincipal extends JFrame {
 
 		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
 
-		mostrarResultado(solucion, tiempoMs, lblSolucionGenetico, lblTamGenetico, lblTiempoGenetico, Color.ORANGE);
+		mostrarResultado(solucion, tiempoMs, lblSolucionGenetico, lblTamGenetico, lblTiempoGenetico,
+				EstiloInterfaz.GENETICO);
 	}
 
 	private void iniciarTestStress() {
@@ -676,5 +697,4 @@ public class VentanaPrincipal extends JFrame {
 	private void mostrarError(String mensaje) {
 		JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
 	}
-
 }
