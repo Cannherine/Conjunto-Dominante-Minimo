@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,9 +100,6 @@ public class VentanaPrincipal extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public VentanaPrincipal() {
 		setTitle("Conjunto Dominante Mínimo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -114,6 +112,7 @@ public class VentanaPrincipal extends JFrame {
 		contentPane.add(crearPanelControles(), BorderLayout.WEST);
 
 		grafoPanel = new GrafoPanel(grafo);
+		grafoPanel.setAlHacerClickEnEspacioVacio(this::agregarVerticeEnPosicion);
 		contentPane.add(grafoPanel, BorderLayout.CENTER);
 
 		JScrollPane scrollResultados = new JScrollPane(crearPanelResultados());
@@ -275,6 +274,43 @@ public class VentanaPrincipal extends JFrame {
 			mostrarMensaje("Vértice agregado: " + vertice.getNombre());
 		} catch (IllegalArgumentException ex) {
 			mostrarError(ex.getMessage());
+		}
+	}
+
+	/**
+	 * Se ejecuta al hacer click en un espacio vacio del grafo: pide el nombre y
+	 * crea el vertice justo en el punto donde se hizo click.
+	 */
+	private void agregarVerticeEnPosicion(Point centro) {
+		while (true) {
+			String ingresado = JOptionPane.showInputDialog(this, "Nombre del nuevo vértice:", "Nuevo vértice",
+					JOptionPane.QUESTION_MESSAGE);
+			if (ingresado == null) {
+				return; // el usuario canceló
+			}
+
+			String nombre = ingresado.trim().toUpperCase();
+			if (nombre.isEmpty()) {
+				mostrarError("El nombre no puede estar vacío.");
+				continue;
+			}
+
+			Vertice vertice = new Vertice(nombre);
+			if (!grafo.agregarVertice(vertice)) {
+				mostrarMensaje("El vértice " + nombre + " ya existe.");
+				continue;
+			}
+
+			modeloVertices.addElement(nombre);
+			comboOrigen.addItem(nombre);
+			comboDestino.addItem(nombre);
+
+			// El grafo cambió, así que los resultados anteriores ya no valen.
+			// No se llama a actualizarVistaGrafo() para no reubicar todos los vértices.
+			limpiarResultados();
+			grafoPanel.limpiarSolucion();
+			grafoPanel.colocarVertice(vertice, centro);
+			return;
 		}
 	}
 
@@ -445,7 +481,7 @@ public class VentanaPrincipal extends JFrame {
 	        @Override
 	        protected Void doInBackground() {
 
-	            prueba.ejecutar(5, 35, (vertices, resultado) -> {
+	            prueba.ejecutar(5, 100, (vertices, resultado) -> {
 
 	                double tiempoMs =
 	                        resultado.getTiempoNanosegundos() / 1_000_000.0;

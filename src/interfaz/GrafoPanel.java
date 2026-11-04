@@ -11,8 +11,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import negocio.Grafo;
 import negocio.Vertice;
@@ -27,12 +29,15 @@ public class GrafoPanel extends JPanel {
     private static final double REPULSION = 6000;
     private static final double ATRACCION = 0.015;
     private static final double DISTANCIA_IDEAL = 110;
+    private static final int UMBRAL_CLICK = 5;
 
     private Grafo grafo;
     private final Map<Vertice, Point> posiciones = new HashMap<>();
     private Vertice verticeSeleccionado;
     private Set<Vertice> solucionActual;
     private Color colorSolucion = Color.GREEN;
+    private Consumer<Point> alHacerClickEnEspacioVacio;
+    private Point puntoPresionado;
 
     public GrafoPanel(Grafo grafo) {
         this.grafo = grafo;
@@ -45,6 +50,11 @@ public class GrafoPanel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 verticeSeleccionado = buscarVertice(e.getX(), e.getY());
+                // Solo cuenta como posible "click para crear" si fue con el boton
+                // izquierdo y sobre un espacio vacio (no sobre un vertice)
+                puntoPresionado = (verticeSeleccionado == null && SwingUtilities.isLeftMouseButton(e))
+                        ? e.getPoint()
+                        : null;
             }
 
             @Override
@@ -63,6 +73,15 @@ public class GrafoPanel extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 verticeSeleccionado = null;
+
+                Point inicio = puntoPresionado;
+                puntoPresionado = null;
+
+                // Es un click (y no un arrastre) si el mouse casi no se movio
+                if (inicio != null && alHacerClickEnEspacioVacio != null
+                        && inicio.distance(e.getPoint()) <= UMBRAL_CLICK && hayLugarLibre(inicio)) {
+                    alHacerClickEnEspacioVacio.accept(inicio);
+                }
             }
         };
 
@@ -75,6 +94,39 @@ public class GrafoPanel extends JPanel {
         posiciones.clear();
         verticeSeleccionado = null;
         limpiarSolucion();
+    }
+
+    /**
+     * Registra la accion a ejecutar cuando el usuario hace click en un espacio
+     * vacio del panel. Recibe el punto del click (coordenadas del panel).
+     */
+    public void setAlHacerClickEnEspacioVacio(Consumer<Point> accion) {
+        this.alHacerClickEnEspacioVacio = accion;
+    }
+
+    /**
+     * Ubica un vertice con su centro en el punto indicado (se ajusta si queda
+     * fuera de los margenes del panel).
+     */
+    public void colocarVertice(Vertice vertice, Point centro) {
+        Point posicion = new Point(centro.x - RADIO_VERTICE, centro.y - RADIO_VERTICE);
+        limitarPosicion(posicion);
+        posiciones.put(vertice, posicion);
+        repaint();
+    }
+
+    // Evita crear un vertice encimado sobre otro ya existente
+    private boolean hayLugarLibre(Point centro) {
+        for (Vertice vertice : grafo.obtenerVertices()) {
+            Point posicion = posiciones.get(vertice);
+            if (posicion != null) {
+                double distancia = centro.distance(posicion.x + RADIO_VERTICE, posicion.y + RADIO_VERTICE);
+                if (distancia < DIAMETRO_VERTICE) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void reorganizarGrafo() {
