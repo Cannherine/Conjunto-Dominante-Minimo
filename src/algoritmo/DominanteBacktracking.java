@@ -9,9 +9,6 @@ import java.util.concurrent.CancellationException;
 import negocio.Grafo;
 import negocio.Vertice;
 
-//Backtracking es una técnica que explora distintas 
-//soluciones posibles y descarta caminos cuando determina 
-//que no conviene seguir por ellos
 public class DominanteBacktracking {
 	public Set<Vertice> resolver(Grafo grafo) {
 		if (grafo == null) {
@@ -30,15 +27,15 @@ public class DominanteBacktracking {
 
 	private void buscar(Grafo grafo, List<Vertice> vertices, int indice, Set<Vertice> actual, Set<Vertice> mejor) {
 
-		  if (Thread.currentThread().isInterrupted()) {
-		        throw new CancellationException("Backtracking interrumpido");
-		    }
+		if (Thread.currentThread().isInterrupted()) {
+			throw new CancellationException("Backtracking interrumpido");
+		}
 
 		if (actual.size() >= mejor.size()) {
 			return;
 		}
 
-		if (indice == vertices.size()) {// CASO BASE :cuando no quedan más vértices por analizar
+		if (indice == vertices.size()) {// CASO BASE 
 			if (ConjuntoDominante.esDominante(grafo, actual)) {
 				mejor.clear();
 				mejor.addAll(actual);
@@ -49,7 +46,7 @@ public class DominanteBacktracking {
 		actual.add(v);
 		buscar(grafo, vertices, indice + 1, actual, mejor);
 
-		actual.remove(v); // LO MAS IMPORTANTE
+		actual.remove(v);
 
 		buscar(grafo, vertices, indice + 1, actual, mejor);
 	}

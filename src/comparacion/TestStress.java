@@ -9,62 +9,65 @@ public class TestStress {
 	private final CompararAlgoritmos comparador;
 	private volatile boolean detenido;
 	private volatile Thread hiloEjecucion;
-	
-    public TestStress() {
-        comparador = new CompararAlgoritmos();
-    }
-    public void detener() {
-        detenido = true;
-        Thread hilo = hiloEjecucion;
 
-        if (hilo != null) {
-            hilo.interrupt();
-        }
-    }
-    public boolean estaDetenido() {
-        return detenido;
-    }
-    public ResultadoAlgoritmo ejecutarInstancia(int cantidadVertices) {
+	public TestStress() {
+		comparador = new CompararAlgoritmos();
+	}
 
-        Grafo grafo = CreadorGrafo.generarAleatorio(cantidadVertices);
+	public void detener() {
+		detenido = true;
+		Thread hilo = hiloEjecucion;
 
-        return comparador.medirBacktracking(grafo);
-    }
-    public void ejecutar(int cantidadInicial, int cantidadFinal,  BiConsumer<Integer, ResultadoAlgoritmo> informarResultado) {
-    	if (informarResultado == null) {
-    	    throw new IllegalArgumentException(
-    	            "El receptor de resultados no puede ser nulo");
-    	}
-    	if (cantidadInicial < 0 || cantidadFinal < cantidadInicial) {
-            throw new IllegalArgumentException("Rango de vertices invalido");
-        }
+		if (hilo != null) {
+			hilo.interrupt();
+		}
+	}
 
-        hiloEjecucion = Thread.currentThread();
-        if (estaDetenido()) {
-            hiloEjecucion.interrupt();
-        }
-        try {
+	public boolean estaDetenido() {
+		return detenido;
+	}
 
-            for (int n = cantidadInicial;
-                    n <= cantidadFinal && !estaDetenido();
-                    n++) {
+	public ResultadoAlgoritmo ejecutarInstancia(int cantidadVertices) {
 
-                ResultadoAlgoritmo resultado = ejecutarInstancia(n);
+		Grafo grafo = CreadorGrafo.generarAleatorio(cantidadVertices);
 
-                if (estaDetenido()) {
-                    break;
-                }
+		return comparador.medirBacktracking(grafo);
+	}
 
-                informarResultado.accept(n, resultado);
-                }
+	public void ejecutar(int cantidadInicial, int cantidadFinal, BiConsumer<Integer, ResultadoAlgoritmo> informarResultado) {
 
-        } catch (CancellationException e) {
+		if (informarResultado == null) {
+			throw new IllegalArgumentException("El receptor de resultados no puede ser nulo");
+		}
+		if (cantidadInicial < 0 || cantidadFinal < cantidadInicial) {
+			throw new IllegalArgumentException("Rango de vertices invalido");
+		}
 
-            System.out.println("Test de estres detenido por el usuario.");
+		hiloEjecucion = Thread.currentThread();
 
-        } finally {
+		if (estaDetenido()) {
+			hiloEjecucion.interrupt();
+		}
 
-            hiloEjecucion = null;
-        }
-    }
+		try {
+			for (int n = cantidadInicial; n <= cantidadFinal && !estaDetenido(); n++) {
+
+				ResultadoAlgoritmo resultado = ejecutarInstancia(n);
+
+				if (estaDetenido()) {
+					break;
+				}
+
+				informarResultado.accept(n, resultado);
+			}
+
+		} catch (CancellationException e) {
+
+			System.out.println("Test de estres detenido por el usuario.");
+
+		} finally {
+
+			hiloEjecucion = null;
+		}
+	}
 }

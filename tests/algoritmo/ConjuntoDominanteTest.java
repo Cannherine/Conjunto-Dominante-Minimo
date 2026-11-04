@@ -13,129 +13,116 @@ import negocio.Grafo;
 import negocio.Vertice;
 
 public class ConjuntoDominanteTest {
-	  @Test
-	    public void noAceptarGrafoNulo() {
-	        assertThrows(IllegalArgumentException.class, () -> ConjuntoDominante.esDominante(null, null));
-	    }
+	@Test
+	public void noAceptarGrafoNulo() {
+		assertThrows(IllegalArgumentException.class, () -> ConjuntoDominante.esDominante(null, null));
+	}
 
-@Test
-public void conjuntoConVerticeInexistente() {
-    Grafo grafo = new Grafo();
+	@Test
+	public void conjuntoConVerticeInexistente() {
+		Grafo grafo = new Grafo();
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
 
-    grafo.agregarVertice(a);
+		grafo.agregarVertice(a);
 
-    Set<Vertice> conjunto = new HashSet<>();
-    conjunto.add(b);
+		Set<Vertice> conjunto = new HashSet<>();
+		conjunto.add(b);
 
-    assertFalse(
-        ConjuntoDominante.esDominante(grafo, conjunto)
-    );
-}
+		assertFalse(ConjuntoDominante.esDominante(grafo, conjunto));
+	}
 
-@Test
-public void conjuntoDominanteValido() {
-    Grafo grafo = new Grafo();
+	@Test
+	public void conjuntoDominanteValido() {
+		Grafo grafo = new Grafo();
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
 
-    grafo.agregarVertice(a);
-    grafo.agregarVertice(b);
-    grafo.agregarVertice(c);
+		grafo.agregarVertice(a);
+		grafo.agregarVertice(b);
+		grafo.agregarVertice(c);
 
-    grafo.agregarArista(a, b);
-    grafo.agregarArista(b, c);
+		grafo.agregarArista(a, b);
+		grafo.agregarArista(b, c);
 
-    Set<Vertice> conjunto = new HashSet<>();
-    conjunto.add(b);
+		Set<Vertice> conjunto = new HashSet<>();
+		conjunto.add(b);
 
-    assertTrue(
-        ConjuntoDominante.esDominante(grafo, conjunto)
-    );
-}
+		assertTrue(ConjuntoDominante.esDominante(grafo, conjunto));
+	}
 
-@Test
-public void conjuntoNoDominante() {
-    Grafo grafo = new Grafo();
+	@Test
+	public void conjuntoNoDominante() {
+		Grafo grafo = new Grafo();
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
 
-    grafo.agregarVertice(a);
-    grafo.agregarVertice(b);
-    grafo.agregarVertice(c);
+		grafo.agregarVertice(a);
+		grafo.agregarVertice(b);
+		grafo.agregarVertice(c);
 
-    grafo.agregarArista(a, b);
-    grafo.agregarArista(b, c);
+		grafo.agregarArista(a, b);
+		grafo.agregarArista(b, c);
 
-    Set<Vertice> conjunto = new HashSet<>();
-    conjunto.add(a);
+		Set<Vertice> conjunto = new HashSet<>();
+		conjunto.add(a);
 
-    assertFalse(
-        ConjuntoDominante.esDominante(grafo, conjunto)
-    );
-}
+		assertFalse(ConjuntoDominante.esDominante(grafo, conjunto));
+	}
 
-@Test
-public void verticeAisladoNoDominado() {
-    Grafo grafo = new Grafo();
+	@Test
+	public void verticeAisladoNoDominado() {
+		Grafo grafo = new Grafo();
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
 
-    grafo.agregarVertice(a);
-    grafo.agregarVertice(b);
-    grafo.agregarVertice(c);
+		grafo.agregarVertice(a);
+		grafo.agregarVertice(b);
+		grafo.agregarVertice(c);
 
-    grafo.agregarArista(a, b);
+		grafo.agregarArista(a, b);
 
-    Set<Vertice> conjunto = new HashSet<>();
-    conjunto.add(a);
+		Set<Vertice> conjunto = new HashSet<>();
+		conjunto.add(a);
 
-    assertFalse(
-        ConjuntoDominante.esDominante(grafo, conjunto)
-    );
-}
+		assertFalse(ConjuntoDominante.esDominante(grafo, conjunto));
+	}
 
-@Test
-public void verticeAisladoIncluidoEnConjunto() {
-    Grafo grafo = new Grafo();
+	@Test
+	public void verticeAisladoIncluidoEnConjunto() {
+		Grafo grafo = new Grafo();
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
 
-    grafo.agregarVertice(a);
-    grafo.agregarVertice(b);
-    grafo.agregarVertice(c);
+		grafo.agregarVertice(a);
+		grafo.agregarVertice(b);
+		grafo.agregarVertice(c);
 
-    grafo.agregarArista(a, b);
+		grafo.agregarArista(a, b);
 
-    Set<Vertice> conjunto = new HashSet<>();
-    conjunto.add(a);
-    conjunto.add(c);
+		Set<Vertice> conjunto = new HashSet<>();
+		conjunto.add(a);
+		conjunto.add(c);
 
-    assertTrue(
-        ConjuntoDominante.esDominante(grafo, conjunto)
-    );
-}
+		assertTrue(ConjuntoDominante.esDominante(grafo, conjunto));
+	}
 
-@Test
-public void conjuntoVacioDominaGrafoVacio() {
-    Grafo grafo = new Grafo();
+	@Test
+	public void conjuntoVacioDominaGrafoVacio() {
+		Grafo grafo = new Grafo();
 
-    Set<Vertice> conjunto = new HashSet<>();
+		Set<Vertice> conjunto = new HashSet<>();
 
-    assertTrue(
-        ConjuntoDominante.esDominante(grafo, conjunto)
-    );
-}
-
+		assertTrue(ConjuntoDominante.esDominante(grafo, conjunto));
+	}
 
 }

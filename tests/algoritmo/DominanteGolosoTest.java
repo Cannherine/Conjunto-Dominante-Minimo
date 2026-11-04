@@ -3,131 +3,126 @@ package algoritmo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
-import algoritmo.ConjuntoDominante;
-import algoritmo.DominanteGoloso;
 import negocio.Grafo;
 import negocio.Vertice;
 
 public class DominanteGolosoTest {
-	 private void agregarVertices(Grafo grafo, Vertice... vertices) {
-	        for (Vertice v : vertices) {
-	            grafo.agregarVertice(v);
-	        }
-	    }
-	 private Set<Vertice> verificarSolucion(
-	            Grafo grafo, int tamañoEsperado) {
-
-	        DominanteGoloso algoritmo = new DominanteGoloso();
-
-	        Set<Vertice> resultado = algoritmo.resolver(grafo);
-
-	        assertNotNull(resultado);
-	        assertEquals(tamañoEsperado, resultado.size());
-	        assertTrue(ConjuntoDominante.esDominante(grafo, resultado));
-
-	        return resultado;
-	    }
 	
-	 @Test
-	    public void grafoConUnSoloVertice() {
+	private void agregarVertices(Grafo grafo, Vertice... vertices) {
+		for (Vertice v : vertices) {
+			grafo.agregarVertice(v);
+		}
+	}
 
-	        Grafo grafo = new Grafo();
-	        Vertice a = new Vertice("A");
+	private Set<Vertice> verificarSolucion(Grafo grafo, int tamañoEsperado) {
 
-	        agregarVertices(grafo, a);
+		DominanteGoloso algoritmo = new DominanteGoloso();
 
-	        Set<Vertice> resultado = verificarSolucion(grafo, 1);
+		Set<Vertice> resultado = algoritmo.resolver(grafo);
 
-	        assertTrue(resultado.contains(a));
-	    
-	    }
+		assertNotNull(resultado);
+		assertEquals(tamañoEsperado, resultado.size());
+		assertTrue(ConjuntoDominante.esDominante(grafo, resultado));
 
-@Test
-public void grafoCaminoTresVertices() {
+		return resultado;
+	}
 
-    Grafo grafo = new Grafo();
+	@Test
+	public void grafoConUnSoloVertice() {
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+		Grafo grafo = new Grafo();
+		Vertice a = new Vertice("A");
 
-    agregarVertices(grafo, a, b, c);
+		agregarVertices(grafo, a);
 
-    grafo.agregarArista(a, b);
-    grafo.agregarArista(b, c);
+		Set<Vertice> resultado = verificarSolucion(grafo, 1);
 
-    Set<Vertice> resultado = verificarSolucion(grafo, 1);
+		assertTrue(resultado.contains(a));
+	}
 
-    assertTrue(resultado.contains(b));
-}
+	@Test
+	public void grafoCaminoTresVertices() {
 
-@Test
-public void grafoConVerticeAislado() {
+		Grafo grafo = new Grafo();
 
-    Grafo grafo = new Grafo();
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+		agregarVertices(grafo, a, b, c);
 
-    agregarVertices(grafo, a, b, c);
+		grafo.agregarArista(a, b);
+		grafo.agregarArista(b, c);
 
-    grafo.agregarArista(a, b);
+		Set<Vertice> resultado = verificarSolucion(grafo, 1);
 
-    Set<Vertice> resultado = verificarSolucion(grafo, 2);
+		assertTrue(resultado.contains(b));
+	}
 
-    assertTrue(resultado.contains(c));
-}
+	@Test
+	public void grafoConVerticeAislado() {
 
-@Test
-public void grafoCompleto() {
+		Grafo grafo = new Grafo();
 
-    Grafo grafo = new Grafo();
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+		agregarVertices(grafo, a, b, c);
 
-    agregarVertices(grafo, a, b, c);
+		grafo.agregarArista(a, b);
 
-    grafo.agregarArista(a, b);
-    grafo.agregarArista(a, c);
-    grafo.agregarArista(b, c);
+		Set<Vertice> resultado = verificarSolucion(grafo, 2);
 
-    verificarSolucion(grafo, 1);
-    }
+		assertTrue(resultado.contains(c));
+	}
 
-@Test
-public void grafoVacio() {
+	@Test
+	public void grafoCompleto() {
 
-    Grafo grafo = new Grafo();
+		Grafo grafo = new Grafo();
 
-    Set<Vertice> resultado = verificarSolucion(grafo, 0);
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
 
-    assertTrue(resultado.isEmpty());
-}
+		agregarVertices(grafo, a, b, c);
 
-@Test
-public void grafoDesconectado() {
+		grafo.agregarArista(a, b);
+		grafo.agregarArista(a, c);
+		grafo.agregarArista(b, c);
 
-    Grafo grafo = new Grafo();
+		verificarSolucion(grafo, 1);
+	}
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
-    Vertice d = new Vertice("D");
+	@Test
+	public void grafoVacio() {
 
-    agregarVertices(grafo, a, b, c, d);
+		Grafo grafo = new Grafo();
 
-    grafo.agregarArista(a, b);
-    grafo.agregarArista(c, d);
+		Set<Vertice> resultado = verificarSolucion(grafo, 0);
 
-    verificarSolucion(grafo, 2);
-}
+		assertTrue(resultado.isEmpty());
+	}
+
+	@Test
+	public void grafoDesconectado() {
+
+		Grafo grafo = new Grafo();
+
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
+		Vertice d = new Vertice("D");
+
+		agregarVertices(grafo, a, b, c, d);
+
+		grafo.agregarArista(a, b);
+		grafo.agregarArista(c, d);
+
+		verificarSolucion(grafo, 2);
+	}
 
 }

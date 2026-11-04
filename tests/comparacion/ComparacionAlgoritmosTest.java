@@ -3,200 +3,194 @@ package comparacion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
-
 import algoritmo.ConjuntoDominante;
 import algoritmo.DominanteBacktracking;
 import algoritmo.DominanteGoloso;
 import algoritmo.DominanteGenetico;
 import negocio.Grafo;
 import negocio.Vertice;
-import comparacion.CompararAlgoritmos;
-import comparacion.CreadorGrafo;
-import comparacion.ResultadoAlgoritmo;
 
 public class ComparacionAlgoritmosTest {
 
-@Test
-public void compararCaminoTresVertices() {
+	@Test
+	public void compararCaminoTresVertices() {
 
-    Grafo grafo = new Grafo();
+		Grafo grafo = new Grafo();
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
 
-    grafo.agregarVertice(a);
-    grafo.agregarVertice(b);
-    grafo.agregarVertice(c);
+		grafo.agregarVertice(a);
+		grafo.agregarVertice(b);
+		grafo.agregarVertice(c);
 
-    grafo.agregarArista(a, b);
-    grafo.agregarArista(b, c);
+		grafo.agregarArista(a, b);
+		grafo.agregarArista(b, c);
 
-    CompararAlgoritmos comparador =new CompararAlgoritmos();
+		CompararAlgoritmos comparador = new CompararAlgoritmos();
 
-    ResultadoAlgoritmo resultadoBacktracking =comparador.medirBacktracking(grafo);
+		ResultadoAlgoritmo resultadoBacktracking = comparador.medirBacktracking(grafo);
 
-    ResultadoAlgoritmo resultadoGoloso =  comparador.medirGoloso(grafo);
-    
-    ResultadoAlgoritmo resultadoGenetico =  comparador.medirGenetico(grafo);
+		ResultadoAlgoritmo resultadoGoloso = comparador.medirGoloso(grafo);
 
-    assertTrue(ConjuntoDominante.esDominante(grafo, resultadoBacktracking.getSolucion()));
-    assertTrue(ConjuntoDominante.esDominante(grafo, resultadoGoloso.getSolucion()));
-    assertTrue(ConjuntoDominante.esDominante(grafo, resultadoGenetico.getSolucion()));
-    
-    assertEquals(1, resultadoBacktracking.getTamaño());
-    assertEquals(1, resultadoGoloso.getTamaño());
-    assertEquals(1, resultadoGenetico.getTamaño());
-    
-    assertTrue(resultadoBacktracking.getTiempoNanosegundos() >= 0);
-    assertTrue(resultadoGoloso.getTiempoNanosegundos() >= 0);
-    assertTrue(resultadoGenetico.getTiempoNanosegundos() >= 0);
+		ResultadoAlgoritmo resultadoGenetico = comparador.medirGenetico(grafo);
 
+		assertTrue(ConjuntoDominante.esDominante(grafo, resultadoBacktracking.getSolucion()));
+		assertTrue(ConjuntoDominante.esDominante(grafo, resultadoGoloso.getSolucion()));
+		assertTrue(ConjuntoDominante.esDominante(grafo, resultadoGenetico.getSolucion()));
 
-System.out.println("BACKTRACKING");
-System.out.println("Tamaño: " + resultadoBacktracking.getTamaño());
-System.out.println("Tiempo (ns): " + resultadoBacktracking.getTiempoNanosegundos());
+		assertEquals(1, resultadoBacktracking.getTamaño());
+		assertEquals(1, resultadoGoloso.getTamaño());
+		assertEquals(1, resultadoGenetico.getTamaño());
 
-System.out.println("GOLOSO");
-System.out.println("Tamaño: " + resultadoGoloso.getTamaño());
-System.out.println("Tiempo (ns): " + resultadoGoloso.getTiempoNanosegundos());
+		assertTrue(resultadoBacktracking.getTiempoNanosegundos() >= 0);
+		assertTrue(resultadoGoloso.getTiempoNanosegundos() >= 0);
+		assertTrue(resultadoGenetico.getTiempoNanosegundos() >= 0);
 
-System.out.println("GENETICO");
-System.out.println("Tamaño: " + resultadoGenetico.getTamaño());
-System.out.println("Tiempo (ns): " + resultadoGenetico.getTiempoNanosegundos());
+		System.out.println("BACKTRACKING");
+		System.out.println("Tamaño: " + resultadoBacktracking.getTamaño());
+		System.out.println("Tiempo (ns): " + resultadoBacktracking.getTiempoNanosegundos());
 
-}
+		System.out.println("GOLOSO");
+		System.out.println("Tamaño: " + resultadoGoloso.getTamaño());
+		System.out.println("Tiempo (ns): " + resultadoGoloso.getTiempoNanosegundos());
 
-@Test
-public void compararCaminosDistintosTamaños() {
+		System.out.println("GENETICO");
+		System.out.println("Tamaño: " + resultadoGenetico.getTamaño());
+		System.out.println("Tiempo (ns): " + resultadoGenetico.getTiempoNanosegundos());
 
-    CompararAlgoritmos comparador = new CompararAlgoritmos();
+	}
 
-    DominanteBacktracking backtracking = new DominanteBacktracking();
+	@Test
+	public void compararCaminosDistintosTamaños() {
 
-    DominanteGoloso goloso = new DominanteGoloso();
-    
-    DominanteGenetico genetico = new DominanteGenetico();
+		CompararAlgoritmos comparador = new CompararAlgoritmos();
 
-    for (int n = 3; n <= 10; n++) {
+		DominanteBacktracking backtracking = new DominanteBacktracking();
 
-        Grafo grafo = CreadorGrafo.generarCamino(n);
+		DominanteGoloso goloso = new DominanteGoloso();
 
-        ResultadoAlgoritmo resultadoBacktracking = comparador.medirBacktracking(grafo);
+		DominanteGenetico genetico = new DominanteGenetico();
 
-        ResultadoAlgoritmo resultadoGoloso = comparador.medirGoloso(grafo);
-        
-        ResultadoAlgoritmo resultadoGenetico = comparador.medirGenetico(grafo);
+		for (int n = 3; n <= 10; n++) {
 
-        assertTrue(ConjuntoDominante.esDominante( grafo, resultadoBacktracking.getSolucion()));
-        assertTrue(ConjuntoDominante.esDominante( grafo, resultadoGoloso.getSolucion()));
-        assertTrue(ConjuntoDominante.esDominante( grafo, resultadoGenetico.getSolucion()));
-        
-        assertTrue(resultadoBacktracking.getTamaño()<= resultadoGoloso.getTamaño());
-        long promedioBacktracking =comparador.calcularPromedio( grafo, backtracking::resolver, 10);
+			Grafo grafo = CreadorGrafo.generarCamino(n);
 
-        long promedioGoloso =  comparador.calcularPromedio( grafo, goloso::resolver, 10);
-        long promedioGenetico =  comparador.calcularPromedio( grafo, genetico::resolver, 10);
+			ResultadoAlgoritmo resultadoBacktracking = comparador.medirBacktracking(grafo);
 
-        System.out.println("Vertices: " + n);
+			ResultadoAlgoritmo resultadoGoloso = comparador.medirGoloso(grafo);
 
-        System.out.println("Backtracking - Tamaño: " + resultadoBacktracking.getTamaño());
+			ResultadoAlgoritmo resultadoGenetico = comparador.medirGenetico(grafo);
 
-        System.out.println("Goloso - Tamaño: " + resultadoGoloso.getTamaño());
-        
-        System.out.println("Genetico - Tamaño: " + resultadoGenetico.getTamaño());
+			assertTrue(ConjuntoDominante.esDominante(grafo, resultadoBacktracking.getSolucion()));
+			assertTrue(ConjuntoDominante.esDominante(grafo, resultadoGoloso.getSolucion()));
+			assertTrue(ConjuntoDominante.esDominante(grafo, resultadoGenetico.getSolucion()));
 
-        System.out.println("Promedio Backtracking (ns): "  + promedioBacktracking);
+			assertTrue(resultadoBacktracking.getTamaño() <= resultadoGoloso.getTamaño());
+			long promedioBacktracking = comparador.calcularPromedio(grafo, backtracking::resolver, 10);
 
-        System.out.println("Promedio Goloso (ns): "  + promedioGoloso);
-        
-        System.out.println("Promedio Genetico (ns): "  + promedioGenetico);
+			long promedioGoloso = comparador.calcularPromedio(grafo, goloso::resolver, 10);
+			long promedioGenetico = comparador.calcularPromedio(grafo, genetico::resolver, 10);
 
-        System.out.println("------------------------");
-    }
-}
+			System.out.println("Vertices: " + n);
 
-@Test
-public void compararGrafosCompletos() {
+			System.out.println("Backtracking - Tamaño: " + resultadoBacktracking.getTamaño());
 
-    CompararAlgoritmos comparador =new CompararAlgoritmos();
+			System.out.println("Goloso - Tamaño: " + resultadoGoloso.getTamaño());
 
-    DominanteBacktracking backtracking = new DominanteBacktracking();
+			System.out.println("Genetico - Tamaño: " + resultadoGenetico.getTamaño());
 
-    DominanteGoloso goloso =  new DominanteGoloso();
-    
-    DominanteGenetico genetico =  new DominanteGenetico();
+			System.out.println("Promedio Backtracking (ns): " + promedioBacktracking);
 
-    for (int n = 3; n <= 10; n++) {
+			System.out.println("Promedio Goloso (ns): " + promedioGoloso);
 
-        Grafo grafo = CreadorGrafo.generarCompleto(n);
+			System.out.println("Promedio Genetico (ns): " + promedioGenetico);
 
-        ResultadoAlgoritmo resultadoBacktracking = comparador.medirBacktracking(grafo);
+			System.out.println("------------------------");
+		}
+	}
 
-        ResultadoAlgoritmo resultadoGoloso = comparador.medirGoloso(grafo);
-        
-        ResultadoAlgoritmo resultadoGenetico = comparador.medirGenetico(grafo);
+	@Test
+	public void compararGrafosCompletos() {
 
-        assertTrue(ConjuntoDominante.esDominante(grafo, resultadoBacktracking.getSolucion()));
+		CompararAlgoritmos comparador = new CompararAlgoritmos();
 
-        assertTrue(ConjuntoDominante.esDominante( grafo, resultadoGoloso.getSolucion()));
-        
-        assertTrue(ConjuntoDominante.esDominante( grafo, resultadoGenetico.getSolucion()));
+		DominanteBacktracking backtracking = new DominanteBacktracking();
 
-        assertEquals(1, resultadoBacktracking.getTamaño());
-        assertEquals(1, resultadoGoloso.getTamaño());
-        assertEquals(1, resultadoGenetico.getTamaño());
+		DominanteGoloso goloso = new DominanteGoloso();
 
-        long promedioBacktracking = comparador.calcularPromedio( grafo, backtracking::resolver, 10);
+		DominanteGenetico genetico = new DominanteGenetico();
 
-        long promedioGoloso =  comparador.calcularPromedio( grafo, goloso::resolver, 10);
-        
-        long promedioGenetico =  comparador.calcularPromedio( grafo, genetico::resolver, 10);
+		for (int n = 3; n <= 10; n++) {
 
-        System.out.println("GRAFO COMPLETO - Vertices: " + n);
-        System.out.println("Backtracking (ns): "+ promedioBacktracking);
-        System.out.println("Goloso (ns): "+ promedioGoloso);
-        System.out.println("Genetico (ns): "+ promedioGenetico);
-        System.out.println("------------------------");
-    }
-}
+			Grafo grafo = CreadorGrafo.generarCompleto(n);
 
-@Test
-public void compararGrafoConVerticeAislado() {
+			ResultadoAlgoritmo resultadoBacktracking = comparador.medirBacktracking(grafo);
 
-    Grafo grafo = new Grafo();
+			ResultadoAlgoritmo resultadoGoloso = comparador.medirGoloso(grafo);
 
-    Vertice a = new Vertice("A");
-    Vertice b = new Vertice("B");
-    Vertice c = new Vertice("C");
+			ResultadoAlgoritmo resultadoGenetico = comparador.medirGenetico(grafo);
 
-    grafo.agregarVertice(a);
-    grafo.agregarVertice(b);
-    grafo.agregarVertice(c);
+			assertTrue(ConjuntoDominante.esDominante(grafo, resultadoBacktracking.getSolucion()));
 
-    grafo.agregarArista(a, b);
+			assertTrue(ConjuntoDominante.esDominante(grafo, resultadoGoloso.getSolucion()));
 
-    CompararAlgoritmos comparador = new CompararAlgoritmos();
+			assertTrue(ConjuntoDominante.esDominante(grafo, resultadoGenetico.getSolucion()));
 
-    ResultadoAlgoritmo backtracking =  comparador.medirBacktracking(grafo);
+			assertEquals(1, resultadoBacktracking.getTamaño());
+			assertEquals(1, resultadoGoloso.getTamaño());
+			assertEquals(1, resultadoGenetico.getTamaño());
 
-    ResultadoAlgoritmo goloso =comparador.medirGoloso(grafo);
-    
-    ResultadoAlgoritmo genetico =comparador.medirGenetico(grafo);
+			long promedioBacktracking = comparador.calcularPromedio(grafo, backtracking::resolver, 10);
 
-    assertTrue(ConjuntoDominante.esDominante(grafo, backtracking.getSolucion()));
+			long promedioGoloso = comparador.calcularPromedio(grafo, goloso::resolver, 10);
 
-    assertTrue(ConjuntoDominante.esDominante(grafo, goloso.getSolucion()));
-    
-    assertTrue(ConjuntoDominante.esDominante(grafo, genetico.getSolucion()));
+			long promedioGenetico = comparador.calcularPromedio(grafo, genetico::resolver, 10);
 
-    assertTrue(backtracking.getSolucion().contains(c));
-    assertTrue(goloso.getSolucion().contains(c));
-    assertTrue(genetico.getSolucion().contains(c));
+			System.out.println("GRAFO COMPLETO - Vertices: " + n);
+			System.out.println("Backtracking (ns): " + promedioBacktracking);
+			System.out.println("Goloso (ns): " + promedioGoloso);
+			System.out.println("Genetico (ns): " + promedioGenetico);
+			System.out.println("------------------------");
+		}
+	}
 
-    assertEquals(2, backtracking.getTamaño());
-    assertEquals(2, goloso.getTamaño());
-    assertEquals(2, genetico.getTamaño());
-}
+	@Test
+	public void compararGrafoConVerticeAislado() {
 
+		Grafo grafo = new Grafo();
+
+		Vertice a = new Vertice("A");
+		Vertice b = new Vertice("B");
+		Vertice c = new Vertice("C");
+
+		grafo.agregarVertice(a);
+		grafo.agregarVertice(b);
+		grafo.agregarVertice(c);
+
+		grafo.agregarArista(a, b);
+
+		CompararAlgoritmos comparador = new CompararAlgoritmos();
+
+		ResultadoAlgoritmo backtracking = comparador.medirBacktracking(grafo);
+
+		ResultadoAlgoritmo goloso = comparador.medirGoloso(grafo);
+
+		ResultadoAlgoritmo genetico = comparador.medirGenetico(grafo);
+
+		assertTrue(ConjuntoDominante.esDominante(grafo, backtracking.getSolucion()));
+
+		assertTrue(ConjuntoDominante.esDominante(grafo, goloso.getSolucion()));
+
+		assertTrue(ConjuntoDominante.esDominante(grafo, genetico.getSolucion()));
+
+		assertTrue(backtracking.getSolucion().contains(c));
+		assertTrue(goloso.getSolucion().contains(c));
+		assertTrue(genetico.getSolucion().contains(c));
+
+		assertEquals(2, backtracking.getTamaño());
+		assertEquals(2, goloso.getTamaño());
+		assertEquals(2, genetico.getTamaño());
+	}
 }

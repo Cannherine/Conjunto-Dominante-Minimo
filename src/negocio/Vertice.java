@@ -10,7 +10,7 @@ public class Vertice {
 			throw new IllegalArgumentException("El nombre no puede estar vacio");
 		}
 		this.nombre = nombre.trim();
-			}
+	}
 
 	public String getNombre() {
 		return nombre;

@@ -19,136 +19,136 @@ import negocio.Vertice;
 
 public class LectorGrafo {
 
-    private static class GrafoJson {
-        List<String> vertices;
-        List<List<String>> aristas;
-    }
+	private static class GrafoJson {
+		List<String> vertices;
+		List<List<String>> aristas;
+	}
 
-    public Grafo cargar(File archivo) throws IOException {
-        if (archivo == null) {
-            throw new IllegalArgumentException("El archivo no puede ser nulo");
-        }
+	public Grafo cargar(File archivo) throws IOException {
+		if (archivo == null) {
+			throw new IllegalArgumentException("El archivo no puede ser nulo");
+		}
 
-        if (archivo.getName().toLowerCase(Locale.ROOT).endsWith(".json")) {
-            return cargarJson(archivo);
-        }
-        return cargarTxt(archivo);
-    }
+		if (archivo.getName().toLowerCase(Locale.ROOT).endsWith(".json")) {
+			return cargarJson(archivo);
+		}
+		return cargarTxt(archivo);
+	}
 
-    private Grafo cargarTxt(File archivo) throws IOException {
-    	
-        Grafo grafo = new Grafo();
+	private Grafo cargarTxt(File archivo) throws IOException {
 
-        try (BufferedReader lector =new BufferedReader(new FileReader(archivo))) {
+		Grafo grafo = new Grafo();
 
-            String linea;
-            boolean leyendoAristas = false;
-            boolean encontroVertices = false;
-            boolean encontroAristas = false;
+		try (BufferedReader lector = new BufferedReader(new FileReader(archivo))) {
 
-            while ((linea = lector.readLine()) != null) {
+			String linea;
+			boolean leyendoAristas = false;
+			boolean encontroVertices = false;
+			boolean encontroAristas = false;
 
-                linea = linea.trim();
+			while ((linea = lector.readLine()) != null) {
 
-                if (linea.isEmpty()) {
-                    continue;
-                }
+				linea = linea.trim();
 
-                if (linea.equalsIgnoreCase("VERTICES")) {
-                    if (encontroVertices || encontroAristas) {
-                        throw new IOException( "Sección VERTICES repetida o fuera de orden");
-                    }
+				if (linea.isEmpty()) {
+					continue;
+				}
 
-                    encontroVertices = true;
-                    continue;
-                }
+				if (linea.equalsIgnoreCase("VERTICES")) {
+					if (encontroVertices || encontroAristas) {
+						throw new IOException("Sección VERTICES repetida o fuera de orden");
+					}
 
-                if (linea.equalsIgnoreCase("ARISTAS")) {
-                    if (!encontroVertices || encontroAristas) {
-                        throw new IOException("Sección ARISTAS inválida");
-                    }
+					encontroVertices = true;
+					continue;
+				}
 
-                    encontroAristas = true;
-                    leyendoAristas = true;
-                    continue;
-                }
+				if (linea.equalsIgnoreCase("ARISTAS")) {
+					if (!encontroVertices || encontroAristas) {
+						throw new IOException("Sección ARISTAS inválida");
+					}
 
-                if (!encontroVertices) {
-                    throw new IOException("Falta la sección VERTICES");
-                }
+					encontroAristas = true;
+					leyendoAristas = true;
+					continue;
+				}
 
-                if (!leyendoAristas) {
-                    agregarVertice(grafo, linea);
-                } else {
-                    agregarArista(grafo, linea);
-                }
-            }
+				if (!encontroVertices) {
+					throw new IOException("Falta la sección VERTICES");
+				}
 
-            if (!encontroVertices || !encontroAristas) {
-                throw new IOException( "El archivo debe contener VERTICES y ARISTAS");
-            }
-        }
+				if (!leyendoAristas) {
+					agregarVertice(grafo, linea);
+				} else {
+					agregarArista(grafo, linea);
+				}
+			}
 
-        return grafo;
-    }
+			if (!encontroVertices || !encontroAristas) {
+				throw new IOException("El archivo debe contener VERTICES y ARISTAS");
+			}
+		}
 
-    private Grafo cargarJson(File archivo) throws IOException {
-        GrafoJson datos;
-        try (Reader lector = new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8)) {
-            datos = new Gson().fromJson(lector, GrafoJson.class);
-        } catch (JsonParseException ex) {
-            throw new IOException("JSON mal formado: " + ex.getMessage());
-        }
+		return grafo;
+	}
 
-        if (datos == null || datos.vertices == null || datos.aristas == null) {
-            throw new IOException("El JSON debe tener los campos \"vertices\" y \"aristas\"");
-        }
+	private Grafo cargarJson(File archivo) throws IOException {
+		GrafoJson datos;
+		try (Reader lector = new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8)) {
+			datos = new Gson().fromJson(lector, GrafoJson.class);
+		} catch (JsonParseException ex) {
+			throw new IOException("JSON mal formado: " + ex.getMessage());
+		}
 
-        Grafo grafo = new Grafo();
+		if (datos == null || datos.vertices == null || datos.aristas == null) {
+			throw new IOException("El JSON debe tener los campos \"vertices\" y \"aristas\"");
+		}
 
-        for (String nombre : datos.vertices) {
-            if (nombre == null) {
-                throw new IOException("Hay un vértice vacío en la lista");
-            }
-            agregarVertice(grafo, nombre);
-        }
+		Grafo grafo = new Grafo();
 
-        for (List<String> par : datos.aristas) {
-            if (par == null || par.size() != 2 || par.get(0) == null || par.get(1) == null) {
-                throw new IOException("Cada arista debe tener exactamente dos vértices: " + par);
-            }
-            agregarArista(grafo, par.get(0), par.get(1));
-        }
+		for (String nombre : datos.vertices) {
+			if (nombre == null) {
+				throw new IOException("Hay un vértice vacío en la lista");
+			}
+			agregarVertice(grafo, nombre);
+		}
 
-        return grafo;
-    }
+		for (List<String> par : datos.aristas) {
+			if (par == null || par.size() != 2 || par.get(0) == null || par.get(1) == null) {
+				throw new IOException("Cada arista debe tener exactamente dos vértices: " + par);
+			}
+			agregarArista(grafo, par.get(0), par.get(1));
+		}
 
-    private void agregarVertice(Grafo grafo, String nombre) throws IOException {
-    	nombre = nombre.toUpperCase(Locale.ROOT);
+		return grafo;
+	}
 
-        Vertice vertice = new Vertice(nombre);
+	private void agregarVertice(Grafo grafo, String nombre) throws IOException {
+		nombre = nombre.toUpperCase(Locale.ROOT);
 
-        if (!grafo.agregarVertice(vertice)) {
-            throw new IOException("Vértice repetido: " + nombre);
-        }
-    }
+		Vertice vertice = new Vertice(nombre);
 
-    private void agregarArista(Grafo grafo, String linea) throws IOException {
-        String[] extremos = linea.split("\\s+");
+		if (!grafo.agregarVertice(vertice)) {
+			throw new IOException("Vértice repetido: " + nombre);
+		}
+	}
 
-        if (extremos.length != 2) {
-            throw new IOException("Arista inválida: " + linea);
-        }
+	private void agregarArista(Grafo grafo, String linea) throws IOException {
+		String[] extremos = linea.split("\\s+");
 
-        agregarArista(grafo, extremos[0], extremos[1]);
-    }
+		if (extremos.length != 2) {
+			throw new IOException("Arista inválida: " + linea);
+		}
 
-    private void agregarArista(Grafo grafo, String a, String b) throws IOException {
-        Vertice origen = new Vertice(a.toUpperCase(Locale.ROOT));
-        Vertice destino = new Vertice(b.toUpperCase(Locale.ROOT));
+		agregarArista(grafo, extremos[0], extremos[1]);
+	}
 
-        if (!grafo.agregarArista(origen, destino)) {
-            throw new IOException("No se pudo agregar la arista: " + origen + " - " + destino);
-        }
-    }
+	private void agregarArista(Grafo grafo, String a, String b) throws IOException {
+		Vertice origen = new Vertice(a.toUpperCase(Locale.ROOT));
+		Vertice destino = new Vertice(b.toUpperCase(Locale.ROOT));
+
+		if (!grafo.agregarArista(origen, destino)) {
+			throw new IOException("No se pudo agregar la arista: " + origen + " - " + destino);
+		}
+	}
 }

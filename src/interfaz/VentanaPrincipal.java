@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -38,12 +37,9 @@ import comparacion.CompararAlgoritmos;
 import comparacion.ResultadoAlgoritmo;
 import comparacion.TestStress;
 
-
-
 public class VentanaPrincipal extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-
 	private Grafo grafo = new Grafo();
 	private GrafoPanel grafoPanel;
 	private final CompararAlgoritmos comparador = new CompararAlgoritmos();
@@ -63,26 +59,23 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btnEliminarArista;
 	private JButton btnBacktracking;
 	private JButton btnGoloso;
-
+	private JButton btnGenetico;
+	private JButton btnIniciarStress;
+	private JButton btnDetenerStress;
 	private JLabel lblSolucionBacktracking;
 	private JLabel lblTamBacktracking;
 	private JLabel lblTiempoBacktracking;
 	private JLabel lblSolucionGoloso;
 	private JLabel lblTamGoloso;
 	private JLabel lblTiempoGoloso;
-	
-	private JButton btnGenetico;
 	private JLabel lblSolucionGenetico;
 	private JLabel lblTamGenetico;
 	private JLabel lblTiempoGenetico;
-	
-	private JButton btnIniciarStress;
-	private JButton btnDetenerStress;
-	private JTextArea areaResultadosStress;
-	
-	private TestStress testStress;
-	private SwingWorker<Void, String> trabajadorStress;
 
+	private JTextArea areaResultadosStress;
+	private TestStress testStress;
+
+	private SwingWorker<Void, String> trabajadorStress;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -111,7 +104,7 @@ public class VentanaPrincipal extends JFrame {
 		grafoPanel = new GrafoPanel(grafo);
 		grafoPanel.setAlHacerClickEnEspacioVacio(this::agregarVerticeEnPosicion);
 		grafoPanel.setAlSeleccionarDosVertices(this::gestionarArista);
-		grafoPanel.setAlSeleccionarVerticeParaEliminar( this::eliminarVerticeDesdeGrafo);
+		grafoPanel.setAlSeleccionarVerticeParaEliminar(this::eliminarVerticeDesdeGrafo);
 		grafoPanel.setAlSeleccionarAristaParaEliminar(this::proponerEliminarArista);
 		JPanel panelEditor = new JPanel(new BorderLayout());
 		JPanel barraHerramientas = new JPanel();
@@ -121,19 +114,19 @@ public class VentanaPrincipal extends JFrame {
 		JToggleButton btnMover = new JToggleButton("✥ Mover");
 		JToggleButton btnEliminar = new JToggleButton("✕ Eliminar");
 
-		btnEliminar.setToolTipText(  "Seleccioná un vértice o una arista para eliminarlo.");
-		btnVertice.setToolTipText( "Clic izquierdo en el espacio blanco para crear un vértice.");
+		btnEliminar.setToolTipText("Seleccioná un vértice o una arista para eliminarlo.");
+		btnVertice.setToolTipText("Clic izquierdo en el espacio blanco para crear un vértice.");
 
-			btnArista.setToolTipText( "Clic derecho sobre dos vértices para unirlos o eliminar su arista.");
+		btnArista.setToolTipText("Clic derecho sobre dos vértices para unirlos o eliminar su arista.");
 
-			btnMover.setToolTipText(  "Mantené presionado el clic izquierdo sobre un vértice y arrastralo.");
+		btnMover.setToolTipText("Mantené presionado el clic izquierdo sobre un vértice y arrastralo.");
 		ButtonGroup grupoHerramientas = new ButtonGroup();
 
 		grupoHerramientas.add(btnVertice);
 		grupoHerramientas.add(btnArista);
 		grupoHerramientas.add(btnMover);
 		grupoHerramientas.add(btnEliminar);
-		
+
 		btnVertice.setSelected(true);
 
 		barraHerramientas.add(btnVertice);
@@ -141,25 +134,25 @@ public class VentanaPrincipal extends JFrame {
 		barraHerramientas.add(btnMover);
 		barraHerramientas.add(btnEliminar);
 
-		btnVertice.addActionListener(e ->  grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.VERTICE));
+		btnVertice.addActionListener(e -> grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.VERTICE));
 
-	btnArista.addActionListener(e -> grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.ARISTA));
+		btnArista.addActionListener(e -> grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.ARISTA));
 
-	btnMover.addActionListener(e ->  grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.MOVER));
-	btnEliminar.addActionListener(e ->
-    grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.ELIMINAR));	
-	JLabel lblInstrucciones = new JLabel("○ Vértice: hacé clic izquierdo en el espacio blanco para crear un vértice.");
+		btnMover.addActionListener(e -> grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.MOVER));
+		btnEliminar.addActionListener(e -> grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.ELIMINAR));
+		JLabel lblInstrucciones = new JLabel(
+				"○ Vértice: hacé clic izquierdo en el espacio blanco para crear un vértice.");
 
-			lblInstrucciones.setHorizontalAlignment(JLabel.CENTER);
+		lblInstrucciones.setHorizontalAlignment(JLabel.CENTER);
 
-			JPanel panelSuperior = new JPanel(new BorderLayout());
+		JPanel panelSuperior = new JPanel(new BorderLayout());
 
-			panelSuperior.add(barraHerramientas, BorderLayout.NORTH);
+		panelSuperior.add(barraHerramientas, BorderLayout.NORTH);
 
-			panelEditor.add(panelSuperior, BorderLayout.NORTH);
-			panelEditor.add(grafoPanel, BorderLayout.CENTER);
+		panelEditor.add(panelSuperior, BorderLayout.NORTH);
+		panelEditor.add(grafoPanel, BorderLayout.CENTER);
 
-			contentPane.add(panelEditor, BorderLayout.CENTER);
+		contentPane.add(panelEditor, BorderLayout.CENTER);
 		JScrollPane scrollResultados = new JScrollPane(crearPanelResultados());
 
 		scrollResultados.setPreferredSize(new Dimension(280, 0));
@@ -239,7 +232,7 @@ public class VentanaPrincipal extends JFrame {
 		panel.add(lblSolucionGoloso);
 		panel.add(lblTamGoloso);
 		panel.add(lblTiempoGoloso);
-		
+
 		btnGenetico = new JButton("Ejecutar Genético");
 		panel.add(btnGenetico);
 		lblSolucionGenetico = new JLabel("Solución: -");
@@ -280,29 +273,29 @@ public class VentanaPrincipal extends JFrame {
 
 	private void cargarGrafo() {
 		JFileChooser selector = new JFileChooser(new File(System.getProperty("user.dir")));
-	    selector.setDialogTitle("Seleccionar archivo de grafo");
-	    selector.setAcceptAllFileFilterUsed(false);
-	    selector.addChoosableFileFilter(new FileNameExtensionFilter("Grafos (TXT o JSON)", "txt", "json"));
-	    selector.addChoosableFileFilter(new FileNameExtensionFilter("Archivos TXT", "txt"));
-	    selector.addChoosableFileFilter(new FileNameExtensionFilter("Archivos JSON", "json"));
+		selector.setDialogTitle("Seleccionar archivo de grafo");
+		selector.setAcceptAllFileFilterUsed(false);
+		selector.addChoosableFileFilter(new FileNameExtensionFilter("Grafos (TXT o JSON)", "txt", "json"));
+		selector.addChoosableFileFilter(new FileNameExtensionFilter("Archivos TXT", "txt"));
+		selector.addChoosableFileFilter(new FileNameExtensionFilter("Archivos JSON", "json"));
 
-	    if (selector.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
-	        return;
-	    }
+		if (selector.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
 
-	    File archivoSeleccionado = selector.getSelectedFile();
-	    try {
-	        LectorGrafo lector = new LectorGrafo();
-	        Grafo nuevoGrafo = lector.cargar(archivoSeleccionado);
+		File archivoSeleccionado = selector.getSelectedFile();
+		try {
+			LectorGrafo lector = new LectorGrafo();
+			Grafo nuevoGrafo = lector.cargar(archivoSeleccionado);
 
-	        grafo = nuevoGrafo;
-	        grafoPanel.setGrafo(grafo);
-	        actualizarListas();
-	        actualizarVistaGrafo();
-	        mostrarMensaje("Grafo cargado correctamente.");
-	    } catch (IOException | IllegalArgumentException ex) {
-	        mostrarError("Error al cargar el archivo: " + ex.getMessage());
-	    }
+			grafo = nuevoGrafo;
+			grafoPanel.setGrafo(grafo);
+			actualizarListas();
+			actualizarVistaGrafo();
+			mostrarMensaje("Grafo cargado correctamente.");
+		} catch (IOException | IllegalArgumentException ex) {
+			mostrarError("Error al cargar el archivo: " + ex.getMessage());
+		}
 	}
 
 	private void agregarVertice() {
@@ -363,7 +356,8 @@ public class VentanaPrincipal extends JFrame {
 			return;
 		}
 
-		int respuesta = JOptionPane.showConfirmDialog(this, "¿Querés eliminar el vértice " + nombre + "?","Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+		int respuesta = JOptionPane.showConfirmDialog(this, "¿Querés eliminar el vértice " + nombre + "?",
+				"Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 		if (respuesta != JOptionPane.YES_OPTION) {
 			return;
 		}
@@ -374,20 +368,23 @@ public class VentanaPrincipal extends JFrame {
 			mostrarMensaje("Vértice eliminado: " + nombre);
 		}
 	}
+
 	private void eliminarVerticeDesdeGrafo(Vertice vertice) {
 
-	    int respuesta = JOptionPane.showConfirmDialog(this,"¿Querés eliminar el vértice " + vertice.getNombre() + "?","Confirmar eliminación",JOptionPane.YES_NO_OPTION );
+		int respuesta = JOptionPane.showConfirmDialog(this, "¿Querés eliminar el vértice " + vertice.getNombre() + "?",
+				"Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 
-	    if (respuesta != JOptionPane.YES_OPTION) {
-	        return;
-	    }
+		if (respuesta != JOptionPane.YES_OPTION) {
+			return;
+		}
 
-	    if (grafo.eliminarVertice(vertice)) {
-	        actualizarListas();
-	        actualizarVistaGrafo();
-	        mostrarMensaje("Vértice eliminado: " + vertice.getNombre());
-	    }
+		if (grafo.eliminarVertice(vertice)) {
+			actualizarListas();
+			actualizarVistaGrafo();
+			mostrarMensaje("Vértice eliminado: " + vertice.getNombre());
+		}
 	}
+
 	private void agregarArista() {
 		String origen = (String) comboOrigen.getSelectedItem();
 		String destino = (String) comboDestino.getSelectedItem();
@@ -459,7 +456,6 @@ public class VentanaPrincipal extends JFrame {
 		limpiarResultados();
 		grafoPanel.limpiarSolucion();
 	}
-
 
 	private String nombreArista(Vertice a, Vertice b) {
 		String x = a.getNombre();
@@ -544,7 +540,8 @@ public class VentanaPrincipal extends JFrame {
 
 		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
 
-		mostrarResultado(solucion, tiempoMs, lblSolucionBacktracking, lblTamBacktracking, lblTiempoBacktracking,Color.YELLOW);
+		mostrarResultado(solucion, tiempoMs, lblSolucionBacktracking, lblTamBacktracking, lblTiempoBacktracking,
+				Color.YELLOW);
 	}
 
 	private void ejecutarGoloso() {
@@ -557,9 +554,10 @@ public class VentanaPrincipal extends JFrame {
 
 		Set<Vertice> solucion = resultado.getSolucion();
 
-		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;	mostrarResultado(solucion, tiempoMs, lblSolucionGoloso, lblTamGoloso, lblTiempoGoloso, Color.GREEN);
+		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
+		mostrarResultado(solucion, tiempoMs, lblSolucionGoloso, lblTamGoloso, lblTiempoGoloso, Color.GREEN);
 	}
-	
+
 	private void ejecutarGenetico() {
 		if (grafo.cantidadVertices() == 0) {
 			mostrarMensaje("Primero tenés que agregar vértices.");
@@ -571,74 +569,74 @@ public class VentanaPrincipal extends JFrame {
 		Set<Vertice> solucion = resultado.getSolucion();
 
 		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
-       
+
 		mostrarResultado(solucion, tiempoMs, lblSolucionGenetico, lblTamGenetico, lblTiempoGenetico, Color.ORANGE);
 	}
+
 	private void iniciarTestStress() {
 
-	    TestStress prueba = new TestStress();
-	    testStress = prueba;
+		TestStress prueba = new TestStress();
+		testStress = prueba;
 
-	    areaResultadosStress.setText("Iniciando test de stress...\n");
+		areaResultadosStress.setText("Iniciando test de stress...\n");
 
-	    btnIniciarStress.setEnabled(false);
-	    btnDetenerStress.setEnabled(true);
+		btnIniciarStress.setEnabled(false);
+		btnDetenerStress.setEnabled(true);
 
-	    trabajadorStress = new SwingWorker<Void, String>() {
+		trabajadorStress = new SwingWorker<Void, String>() {
 
-	        @Override
-	        protected Void doInBackground() {
+			@Override
+			protected Void doInBackground() {
 
-	            prueba.ejecutar(5, 100, (vertices, resultado) -> {
+				prueba.ejecutar(5, 100, (vertices, resultado) -> {
 
-	                double tiempoMs =
-	                        resultado.getTiempoNanosegundos() / 1_000_000.0;
+					double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
 
-	                String texto = String.format(
-	                        "Vertices: %d - Tiempo: %.3f ms",
-	                        vertices, tiempoMs);
+					String texto = String.format("Vertices: %d - Tiempo: %.3f ms", vertices, tiempoMs);
 
-	                publish(texto);
-	            });
+					publish(texto);
+				});
 
-	            return null;
-	        }
+				return null;
+			}
 
-	        @Override
-	        protected void process(List<String> resultados) {
+			@Override
+			protected void process(List<String> resultados) {
 
-	            for (String resultado : resultados) {
-	                areaResultadosStress.append(resultado + "\n");
-	            }
-	        }
+				for (String resultado : resultados) {
+					areaResultadosStress.append(resultado + "\n");
+				}
+			}
 
-	        @Override
-	        protected void done() {
+			@Override
+			protected void done() {
 
-	            if (prueba.estaDetenido()) {
-	                areaResultadosStress.append("TEST DETENIDO POR EL USUARIO\n");
-	            } else {
-	                areaResultadosStress.append( "TEST FINALIZADO\n");
-	            }
+				if (prueba.estaDetenido()) {
+					areaResultadosStress.append("TEST DETENIDO POR EL USUARIO\n");
+				} else {
+					areaResultadosStress.append("TEST FINALIZADO\n");
+				}
 
-	            btnIniciarStress.setEnabled(true);
-	            btnDetenerStress.setEnabled(false);
-	        }
-	    };
+				btnIniciarStress.setEnabled(true);
+				btnDetenerStress.setEnabled(false);
+			}
+		};
 
-	    trabajadorStress.execute();
+		trabajadorStress.execute();
 	}
+
 	private void detenerTestStress() {
 
-	    if (testStress != null && !testStress.estaDetenido()) {
+		if (testStress != null && !testStress.estaDetenido()) {
 
-	        testStress.detener();
+			testStress.detener();
 
-	        areaResultadosStress.append( "Solicitando detener el test...\n");
+			areaResultadosStress.append("Solicitando detener el test...\n");
 
-	        btnDetenerStress.setEnabled(false);
-	    }
+			btnDetenerStress.setEnabled(false);
+		}
 	}
+
 	private void mostrarResultado(Set<Vertice> solucion, double tiempoMs, JLabel lblSolucion, JLabel lblTam,
 			JLabel lblTiempo, Color color) {
 		lblSolucion.setText("Solución: " + formatearSolucion(solucion));
@@ -660,17 +658,17 @@ public class VentanaPrincipal extends JFrame {
 		lblSolucionBacktracking.setText("Solución: -");
 		lblTamBacktracking.setText("Tamaño: -");
 		lblTiempoBacktracking.setText("Tiempo: -");
-		
-        lblSolucionGoloso.setText("Solución: -");
+
+		lblSolucionGoloso.setText("Solución: -");
 		lblTamGoloso.setText("Tamaño: -");
 		lblTiempoGoloso.setText("Tiempo: -");
-        
-        
-        lblSolucionGenetico.setText("Solución: -");
-        lblTamGenetico.setText("Tamaño: -");
-        lblTiempoGenetico.setText("Tiempo: -");
+
+		lblSolucionGenetico.setText("Solución: -");
+		lblTamGenetico.setText("Tamaño: -");
+		lblTiempoGenetico.setText("Tiempo: -");
 
 	}
+
 	private void mostrarMensaje(String mensaje) {
 		JOptionPane.showMessageDialog(this, mensaje);
 	}

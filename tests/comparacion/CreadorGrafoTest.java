@@ -4,156 +4,145 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.Test;
-
 import algoritmo.ConjuntoDominante;
-import comparacion.CompararAlgoritmos;
-import comparacion.CreadorGrafo;
-import comparacion.ResultadoAlgoritmo;
 import negocio.Grafo;
 import negocio.Vertice;
 
 public class CreadorGrafoTest {
 
-    @Test
-    public void generarCaminoDeTresVertices() {
+	@Test
+	public void generarCaminoDeTresVertices() {
 
-        Grafo grafo = CreadorGrafo.generarCamino(3);
+		Grafo grafo = CreadorGrafo.generarCamino(3);
 
-        Vertice v0 = new Vertice("V0");
-        Vertice v1 = new Vertice("V1");
-        Vertice v2 = new Vertice("V2");
+		Vertice v0 = new Vertice("V0");
+		Vertice v1 = new Vertice("V1");
+		Vertice v2 = new Vertice("V2");
 
-        assertEquals(3, grafo.cantidadVertices());
-        assertEquals(2, grafo.cantidadAristas());
+		assertEquals(3, grafo.cantidadVertices());
+		assertEquals(2, grafo.cantidadAristas());
 
-        assertTrue(grafo.existeArista(v0, v1));
-        assertTrue(grafo.existeArista(v1, v2));
-        assertFalse(grafo.existeArista(v0, v2));
-    }
+		assertTrue(grafo.existeArista(v0, v1));
+		assertTrue(grafo.existeArista(v1, v2));
+		assertFalse(grafo.existeArista(v0, v2));
+	}
 
-@Test
-public void generarCaminoVacio() {
+	@Test
+	public void generarCaminoVacio() {
 
-    Grafo grafo = CreadorGrafo.generarCamino(0);
+		Grafo grafo = CreadorGrafo.generarCamino(0);
 
-    assertEquals(0, grafo.cantidadVertices());
-    assertEquals(0, grafo.cantidadAristas());
-}
+		assertEquals(0, grafo.cantidadVertices());
+		assertEquals(0, grafo.cantidadAristas());
+	}
 
-@Test
-public void generarCaminoUnVertice() {
+	@Test
+	public void generarCaminoUnVertice() {
 
-    Grafo grafo = CreadorGrafo.generarCamino(1);
+		Grafo grafo = CreadorGrafo.generarCamino(1);
 
-    assertEquals(1, grafo.cantidadVertices());
-    assertEquals(0, grafo.cantidadAristas());
-}
+		assertEquals(1, grafo.cantidadVertices());
+		assertEquals(0, grafo.cantidadAristas());
+	}
 
-@Test
-public void generarCaminoCantidadNegativa() {
+	@Test
+	public void generarCaminoCantidadNegativa() {
 
-	assertThrows(IllegalArgumentException.class, () -> CreadorGrafo.generarCamino(-1));
-}
+		assertThrows(IllegalArgumentException.class, () -> CreadorGrafo.generarCamino(-1));
+	}
 
-@Test
-public void compararCaminosDistintosTamaños() {
+	@Test
+	public void compararCaminosDistintosTamaños() {
 
-    CompararAlgoritmos comparador = new CompararAlgoritmos();
+		CompararAlgoritmos comparador = new CompararAlgoritmos();
 
-    for (int n = 3; n <= 10; n++) {
+		for (int n = 3; n <= 10; n++) {
 
-        Grafo grafo = CreadorGrafo.generarCamino(n);
+			Grafo grafo = CreadorGrafo.generarCamino(n);
 
-        ResultadoAlgoritmo backtracking =  comparador.medirBacktracking(grafo);
+			ResultadoAlgoritmo backtracking = comparador.medirBacktracking(grafo);
 
-        ResultadoAlgoritmo goloso = comparador.medirGoloso(grafo);
-        
-        ResultadoAlgoritmo genetico = comparador.medirGenetico(grafo);
+			ResultadoAlgoritmo goloso = comparador.medirGoloso(grafo);
 
-        assertTrue(ConjuntoDominante.esDominante(grafo, backtracking.getSolucion()));
+			ResultadoAlgoritmo genetico = comparador.medirGenetico(grafo);
 
-        assertTrue(ConjuntoDominante.esDominante(grafo, goloso.getSolucion()));
-        
-        assertTrue(ConjuntoDominante.esDominante(grafo, genetico.getSolucion()));
+			assertTrue(ConjuntoDominante.esDominante(grafo, backtracking.getSolucion()));
 
+			assertTrue(ConjuntoDominante.esDominante(grafo, goloso.getSolucion()));
 
-        System.out.println("Vertices: " + n);
-        System.out.println("Backtracking: "
-                + backtracking.getTamaño() + " vertices, "
-                + backtracking.getTiempoNanosegundos() + " ns");
+			assertTrue(ConjuntoDominante.esDominante(grafo, genetico.getSolucion()));
 
-        System.out.println("Goloso: "
-                + goloso.getTamaño() + " vertices, "
-                + goloso.getTiempoNanosegundos() + " ns");
-        
-        System.out.println("Genetico: "
-                + genetico.getTamaño() + " vertices, "
-                + genetico.getTiempoNanosegundos() + " ns");
+			System.out.println("Vertices: " + n);
+			System.out.println("Backtracking: " + backtracking.getTamaño() + " vertices, "
+					+ backtracking.getTiempoNanosegundos() + " ns");
 
-        System.out.println("----------------------");
-    }
-}
+			System.out
+					.println("Goloso: " + goloso.getTamaño() + " vertices, " + goloso.getTiempoNanosegundos() + " ns");
 
+			System.out.println(
+					"Genetico: " + genetico.getTamaño() + " vertices, " + genetico.getTiempoNanosegundos() + " ns");
 
-@Test
-public void generarGrafoCompletoCuatroVertices() {
+			System.out.println("----------------------");
+		}
+	}
 
-    Grafo grafo = CreadorGrafo.generarCompleto(4);
+	@Test
+	public void generarGrafoCompletoCuatroVertices() {
 
-    Vertice v0 = new Vertice("V0");
-    Vertice v1 = new Vertice("V1");
-    Vertice v2 = new Vertice("V2");
-    Vertice v3 = new Vertice("V3");
+		Grafo grafo = CreadorGrafo.generarCompleto(4);
 
-    assertEquals(4, grafo.cantidadVertices());
-    assertEquals(6, grafo.cantidadAristas());
+		Vertice v0 = new Vertice("V0");
+		Vertice v1 = new Vertice("V1");
+		Vertice v2 = new Vertice("V2");
+		Vertice v3 = new Vertice("V3");
 
-    assertTrue(grafo.existeArista(v0, v1));
-    assertTrue(grafo.existeArista(v0, v2));
-    assertTrue(grafo.existeArista(v0, v3));
-    assertTrue(grafo.existeArista(v1, v2));
-    assertTrue(grafo.existeArista(v1, v3));
-    assertTrue(grafo.existeArista(v2, v3));
-}
-@Test
-public void compararTiemposPromedio() {
+		assertEquals(4, grafo.cantidadVertices());
+		assertEquals(6, grafo.cantidadAristas());
 
-    Grafo grafo = CreadorGrafo.generarCamino(6);
+		assertTrue(grafo.existeArista(v0, v1));
+		assertTrue(grafo.existeArista(v0, v2));
+		assertTrue(grafo.existeArista(v0, v3));
+		assertTrue(grafo.existeArista(v1, v2));
+		assertTrue(grafo.existeArista(v1, v3));
+		assertTrue(grafo.existeArista(v2, v3));
+	}
 
-    CompararAlgoritmos comparador = new CompararAlgoritmos();
+	@Test
+	public void compararTiemposPromedio() {
 
-    long tiempoBacktracking =
-            comparador.medirPromedioBacktracking(grafo);
+		Grafo grafo = CreadorGrafo.generarCamino(6);
 
-    long tiempoGoloso =
-            comparador.medirPromedioGoloso(grafo);
+		CompararAlgoritmos comparador = new CompararAlgoritmos();
 
-    long tiempoGenetico =
-            comparador.medirPromedioGenetico(grafo);
+		long tiempoBacktracking = comparador.medirPromedioBacktracking(grafo);
 
-    System.out.println("TIEMPOS PROMEDIO - 6 VERTICES");
+		long tiempoGoloso = comparador.medirPromedioGoloso(grafo);
 
-    System.out.printf("Backtracking: %.3f ms%n", tiempoBacktracking / 1_000_000.0);
+		long tiempoGenetico = comparador.medirPromedioGenetico(grafo);
 
-    System.out.printf("Goloso: %.3f ms%n", tiempoGoloso / 1_000_000.0);
+		System.out.println("TIEMPOS PROMEDIO - 6 VERTICES");
 
-    System.out.printf("Genetico: %.3f ms%n",tiempoGenetico / 1_000_000.0);
+		System.out.printf("Backtracking: %.3f ms%n", tiempoBacktracking / 1_000_000.0);
 
-    assertTrue(tiempoBacktracking >= 0);
-    assertTrue(tiempoGoloso >= 0);
-    assertTrue(tiempoGenetico >= 0);
-}
-@Test
-public void generarGrafoAleatorioDiezVertices() {
+		System.out.printf("Goloso: %.3f ms%n", tiempoGoloso / 1_000_000.0);
 
-    Grafo grafo = CreadorGrafo.generarAleatorio(10);
+		System.out.printf("Genetico: %.3f ms%n", tiempoGenetico / 1_000_000.0);
 
-    assertEquals(10, grafo.cantidadVertices());
+		assertTrue(tiempoBacktracking >= 0);
+		assertTrue(tiempoGoloso >= 0);
+		assertTrue(tiempoGenetico >= 0);
+	}
 
-    assertTrue(grafo.cantidadAristas() >= 0);
+	@Test
+	public void generarGrafoAleatorioDiezVertices() {
 
-    assertTrue(grafo.cantidadAristas() <= 45);
-}
+		Grafo grafo = CreadorGrafo.generarAleatorio(10);
+
+		assertEquals(10, grafo.cantidadVertices());
+
+		assertTrue(grafo.cantidadAristas() >= 0);
+
+		assertTrue(grafo.cantidadAristas() <= 45);
+	}
 }

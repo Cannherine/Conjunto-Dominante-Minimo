@@ -3,16 +3,12 @@ package archivo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import archivo.LectorGrafo;
 import negocio.Grafo;
 import negocio.Vertice;
 
@@ -27,13 +23,10 @@ class LectorGrafoTest {
 		return archivo.toFile();
 	}
 
-	// Carga el archivo, espera una IOException y devuelve su mensaje
 	private String mensajeDeError(File archivo) {
 		IOException excepcion = assertThrows(IOException.class, () -> new LectorGrafo().cargar(archivo));
 		return excepcion.getMessage();
 	}
-
-	// ---------- Casos comunes a ambos formatos ----------
 
 	@Test
 	void archivoNuloLanzaExcepcion() {
@@ -56,8 +49,6 @@ class LectorGrafoTest {
 
 		assertThrows(IOException.class, () -> new LectorGrafo().cargar(archivo));
 	}
-
-	// ---------- JSON ----------
 
 	@Test
 	void cargarJsonValido() throws IOException {
@@ -100,7 +91,6 @@ class LectorGrafoTest {
 
 	@Test
 	void jsonMalFormadoLanzaExcepcion() throws IOException {
-		// falta cerrar la lista y la llave
 		File archivo = crearArchivo("grafo.json", "{ \"vertices\": [\"A\", ");
 
 		assertTrue(mensajeDeError(archivo).contains("JSON mal formado"));
@@ -163,9 +153,6 @@ class LectorGrafoTest {
 
 		assertTrue(mensajeDeError(archivo).contains("No se pudo agregar la arista"));
 	}
-
-	// ---------- TXT (se verifica que el formato anterior sigue funcionando)
-	// ----------
 
 	@Test
 	void cargarTxtValido() throws IOException {

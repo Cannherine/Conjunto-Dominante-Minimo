@@ -11,92 +11,86 @@ import negocio.Vertice;
 
 public class CompararAlgoritmos {
 	private static final int repeticiones = 10;
-	 public ResultadoAlgoritmo medirBacktracking(Grafo grafo) {
 
-	        DominanteBacktracking algoritmo = new DominanteBacktracking();
+	public ResultadoAlgoritmo medirBacktracking(Grafo grafo) {
 
-	        return medirTiempo(grafo, algoritmo::resolver);
-	    }
+		DominanteBacktracking algoritmo = new DominanteBacktracking();
+		return medirTiempo(grafo, algoritmo::resolver);
+	}
 
-	    public ResultadoAlgoritmo medirGoloso(Grafo grafo) {
+	public ResultadoAlgoritmo medirGoloso(Grafo grafo) {
 
-	        DominanteGoloso algoritmo = new DominanteGoloso();
+		DominanteGoloso algoritmo = new DominanteGoloso();
+		return medirTiempo(grafo, algoritmo::resolver);
+	}
 
-	        return medirTiempo(grafo, algoritmo::resolver);
-	    }
-	    
-	    public ResultadoAlgoritmo medirGenetico(Grafo grafo) {
-	        
-	        DominanteGenetico algoritmo = new DominanteGenetico();
-	        
-	        return medirTiempo(grafo, algoritmo::resolver);
-	    }
-	    public long medirPromedioGenetico(Grafo grafo) {
+	public ResultadoAlgoritmo medirGenetico(Grafo grafo) {
 
-	        DominanteGenetico algoritmo = new DominanteGenetico();
+		DominanteGenetico algoritmo = new DominanteGenetico();
+		return medirTiempo(grafo, algoritmo::resolver);
+	}
 
-	        return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
-	    }
-	    public long medirPromedioBacktracking(Grafo grafo) {
+	public long medirPromedioGenetico(Grafo grafo) {
 
-	        DominanteBacktracking algoritmo = new DominanteBacktracking();
+		DominanteGenetico algoritmo = new DominanteGenetico();
+		return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
+	}
 
-	        return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
-	    }
+	public long medirPromedioBacktracking(Grafo grafo) {
 
-	    public long medirPromedioGoloso(Grafo grafo) {
+		DominanteBacktracking algoritmo = new DominanteBacktracking();
+		return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
+	}
 
-	        DominanteGoloso algoritmo = new DominanteGoloso();
+	public long medirPromedioGoloso(Grafo grafo) {
+		DominanteGoloso algoritmo = new DominanteGoloso();
+		return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
+	}
 
-	        return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
-	    }
-	    public long calcularPromedio(Grafo grafo, Function<Grafo, Set<Vertice>> resolver, int repeticiones) {
+	public long calcularPromedio(Grafo grafo, Function<Grafo, Set<Vertice>> resolver, int repeticiones) {
 
-	        validarArgumentos(grafo, resolver);
+		validarArgumentos(grafo, resolver);
 
-	        if (repeticiones <= 0) {
-	            throw new IllegalArgumentException("Las repeticiones deben ser positivas");
-	        }
+		if (repeticiones <= 0) {
+			throw new IllegalArgumentException("Las repeticiones deben ser positivas");
+		}
 
-	        
-	        for (int i = 0; i < 5; i++) {
-	            resolver.apply(grafo);
-	        }
+		for (int i = 0; i < 5; i++) {
+			resolver.apply(grafo);
+		}
 
-	        long tiempoTotal = 0;
+		long tiempoTotal = 0;
 
-	        for (int i = 0; i < repeticiones; i++) {
+		for (int i = 0; i < repeticiones; i++) {
 
-	            ResultadoAlgoritmo resultado = medirTiempo(grafo, resolver);
+			ResultadoAlgoritmo resultado = medirTiempo(grafo, resolver);
 
-	            tiempoTotal += resultado.getTiempoNanosegundos();
-	        }
+			tiempoTotal += resultado.getTiempoNanosegundos();
+		}
 
-	        return tiempoTotal / repeticiones;
-	    }
+		return tiempoTotal / repeticiones;
+	}
 
-	    private ResultadoAlgoritmo medirTiempo(Grafo grafo,Function<Grafo, Set<Vertice>> resolver) {
+	private ResultadoAlgoritmo medirTiempo(Grafo grafo, Function<Grafo, Set<Vertice>> resolver) {
 
-	        validarArgumentos(grafo, resolver);
+		validarArgumentos(grafo, resolver);
 
-	        long inicio = System.nanoTime();
+		long inicio = System.nanoTime();
+		Set<Vertice> solucion = resolver.apply(grafo);
+		long fin = System.nanoTime();
 
-	        Set<Vertice> solucion = resolver.apply(grafo);
+		return new ResultadoAlgoritmo(solucion, fin - inicio);
+	}
 
-	        long fin = System.nanoTime();
+	private void validarArgumentos(Grafo grafo, Function<Grafo, Set<Vertice>> resolver) {
 
-	        return new ResultadoAlgoritmo(solucion, fin - inicio);
-	    }
+		if (grafo == null) {
+			throw new IllegalArgumentException("El grafo no puede ser nulo");
+		}
 
-	    private void validarArgumentos(Grafo grafo,Function<Grafo, Set<Vertice>> resolver) {
-
-	        if (grafo == null) {
-	            throw new IllegalArgumentException("El grafo no puede ser nulo");
-	        }
-
-	        if (resolver == null) {
-	            throw new IllegalArgumentException( "El algoritmo no puede ser nulo");
-	        }
-	    }
+		if (resolver == null) {
+			throw new IllegalArgumentException("El algoritmo no puede ser nulo");
+		}
+	}
 
 }

@@ -6,13 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Grafo {
-	/**
-	 * Representa un grafo simple, no dirigido y sin pesos.
-	 *
-	 * Utiliza una lista de adyacencia para almacenar los vertices y sus conexiones.
-	 *
-	 * No permite vertices repetidos, lazos ni aristas duplicadas.
-	 */
+
 	private final Map<Vertice, Set<Vertice>> adyacencias;
 
 	public Grafo() {
@@ -32,7 +26,7 @@ public class Grafo {
 			return false;
 		}
 
-		adyacencias.put(v, new HashSet<>());// vamos a guardar los vertics vecinos
+		adyacencias.put(v, new HashSet<>());
 		return true;
 	}
 
@@ -101,5 +95,4 @@ public class Grafo {
 
 		return cantidad / 2;
 	}
-
 }

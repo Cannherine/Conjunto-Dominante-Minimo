@@ -4,11 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.Test;
-
-import negocio.Grafo;
-import negocio.Vertice;
 
 public class GrafoTest {
 	@Test
@@ -337,5 +333,4 @@ public class GrafoTest {
 
 		assertEquals(2, grafo.cantidadAristas());
 	}
-
 }

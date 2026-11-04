@@ -3,6 +3,8 @@ package comparacion;
 import negocio.Grafo;
 import negocio.Vertice;
 import java.util.Random;
+
+
 public class CreadorGrafo {
 	private CreadorGrafo() {
 	}
@@ -52,34 +54,33 @@ public class CreadorGrafo {
 
 		return grafo;
 	}
-	
+
 	public static Grafo generarAleatorio(int cantidadVertices) {
 
-	    validarCantidad(cantidadVertices);
+		validarCantidad(cantidadVertices);
 
-	    Grafo grafo = new Grafo();
-	    Vertice[] vertices = new Vertice[cantidadVertices];
-	    Random random = new Random();
+		Grafo grafo = new Grafo();
+		Vertice[] vertices = new Vertice[cantidadVertices];
+		Random random = new Random();
 
-	    for (int i = 0; i < cantidadVertices; i++) {
+		for (int i = 0; i < cantidadVertices; i++) {
 
-	        vertices[i] = new Vertice("V" + i);
-	        grafo.agregarVertice(vertices[i]);
-	    }
+			vertices[i] = new Vertice("V" + i);
+			grafo.agregarVertice(vertices[i]);
+		}
 
-	    for (int i = 0; i < cantidadVertices; i++) {
+		for (int i = 0; i < cantidadVertices; i++) {
 
-	        for (int j = i + 1; j < cantidadVertices; j++) {
+			for (int j = i + 1; j < cantidadVertices; j++) {
 
-	            if (random.nextBoolean()) {
-	                grafo.agregarArista(vertices[i], vertices[j]);
-	            }
-	        }
-	    }
+				if (random.nextBoolean()) {
+					grafo.agregarArista(vertices[i], vertices[j]);
+				}
+			}
+		}
 
-	    return grafo;
+		return grafo;
 	}
-	
 
 	private static void validarCantidad(int cantidadVertices) {
 
@@ -87,5 +88,4 @@ public class CreadorGrafo {
 			throw new IllegalArgumentException("La cantidad de vertices no puede ser negativa");
 		}
 	}
-
 }
