@@ -528,7 +528,7 @@ public class VentanaPrincipal extends JFrame {
 	        @Override
 	        protected Void doInBackground() {
 
-	            prueba.ejecutar(5, 35, (vertices, resultado) -> {
+	            prueba.ejecutar(5, 100, (vertices, resultado) -> {
 
 	                double tiempoMs =
 	                        resultado.getTiempoNanosegundos() / 1_000_000.0;
