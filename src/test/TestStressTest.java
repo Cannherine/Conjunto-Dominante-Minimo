@@ -6,15 +6,15 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import comparacion.ResultadoAlgoritmo;
-import comparacion.TestEstres;
+import comparacion.TestStress;
 
-public class TestEstresTest {
+public class TestStressTest {
 	 @Test
 	    public void ejecutarInstanciaConCincoVertices() {
 
-	        TestEstres testEstres = new TestEstres();
+	        TestStress testStress = new TestStress();
 
-	        ResultadoAlgoritmo resultado =   testEstres.ejecutarInstancia(5);
+	        ResultadoAlgoritmo resultado =   testStress.ejecutarInstancia(5);
 
 	        assertNotNull(resultado);
 	        assertNotNull(resultado.getSolucion());

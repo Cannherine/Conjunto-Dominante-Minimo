@@ -5,12 +5,12 @@ import java.util.function.BiConsumer;
 
 import negocio.Grafo;
 
-public class TestEstres {
+public class TestStress {
 	private final CompararAlgoritmos comparador;
 	private volatile boolean detenido;
 	private volatile Thread hiloEjecucion;
 	
-    public TestEstres() {
+    public TestStress() {
         comparador = new CompararAlgoritmos();
     }
     public void detener() {

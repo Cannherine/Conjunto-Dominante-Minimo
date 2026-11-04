@@ -37,7 +37,7 @@ import negocio.Grafo;
 import negocio.Vertice;
 import comparacion.CompararAlgoritmos;
 import comparacion.ResultadoAlgoritmo;
-import comparacion.TestEstres;
+import comparacion.TestStress;
 
 
 
@@ -77,12 +77,12 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lblTamGenetico;
 	private JLabel lblTiempoGenetico;
 	
-	private JButton btnIniciarEstres;
-	private JButton btnDetenerEstres;
-	private JTextArea areaResultadosEstres;
+	private JButton btnIniciarStress;
+	private JButton btnDetenerStress;
+	private JTextArea areaResultadosStress;
 	
-	private TestEstres testEstres;
-	private SwingWorker<Void, String> trabajadorEstres;
+	private TestStress testStress;
+	private SwingWorker<Void, String> trabajadorStress;
 
 
 	public static void main(String[] args) {
@@ -202,20 +202,20 @@ public class VentanaPrincipal extends JFrame {
 		panel.add(lblSolucionGenetico);
 		panel.add(lblTamGenetico);
 		panel.add(lblTiempoGenetico);
-		panel.add(new JLabel("TEST DE ESTRES"));
+		panel.add(new JLabel("TEST DE STRESS"));
 
-		btnIniciarEstres = new JButton("Iniciar test de estres");
-		panel.add(btnIniciarEstres);
+		btnIniciarStress = new JButton("Iniciar test de stress");
+		panel.add(btnIniciarStress);
 
-		btnDetenerEstres = new JButton("Detener test");
-		btnDetenerEstres.setEnabled(false);
-		panel.add(btnDetenerEstres);
+		btnDetenerStress = new JButton("Detener test");
+		btnDetenerStress.setEnabled(false);
+		panel.add(btnDetenerStress);
 
-		areaResultadosEstres = new JTextArea();
-		areaResultadosEstres.setEditable(false);
+		areaResultadosStress = new JTextArea();
+		areaResultadosStress.setEditable(false);
 
-		JScrollPane scrollEstres = new JScrollPane(areaResultadosEstres);
-		panel.add(scrollEstres);
+		JScrollPane scrollStress = new JScrollPane(areaResultadosStress);
+		panel.add(scrollStress);
 		return panel;
 	}
 
@@ -228,8 +228,8 @@ public class VentanaPrincipal extends JFrame {
 		btnBacktracking.addActionListener(e -> ejecutarBacktracking());
 		btnGoloso.addActionListener(e -> ejecutarGoloso());
 		btnGenetico.addActionListener(e -> ejecutarGenetico());
-		btnIniciarEstres.addActionListener(e -> iniciarTestEstres());
-		btnDetenerEstres.addActionListener(e -> detenerTestEstres());
+		btnIniciarStress.addActionListener(e -> iniciarTestStress());
+		btnDetenerStress.addActionListener(e -> detenerTestStress());
 	}
 
 	private void cargarGrafo() {
@@ -352,10 +352,6 @@ public class VentanaPrincipal extends JFrame {
 		}
 	}
 
-	/**
-	 * Se ejecuta al elegir dos vértices con el click derecho: si ya están
-	 * conectados propone eliminar la arista, y si no, propone crearla.
-	 */
 	private void gestionarArista(Vertice origen, Vertice destino) {
 		if (grafo.existeArista(origen, destino)) {
 			proponerEliminarArista(origen, destino);
@@ -379,15 +375,10 @@ public class VentanaPrincipal extends JFrame {
 
 		modeloAristas.addElement(nombreArista(origen, destino));
 
-		// El grafo cambió: se borran los resultados viejos, pero NO se reubican los vértices
 		limpiarResultados();
 		grafoPanel.limpiarSolucion();
 	}
 
-	/**
-	 * Igual que el botón "Eliminar arista", pero para una arista elegida con el
-	 * click derecho sobre sus dos vértices.
-	 */
 	private void proponerEliminarArista(Vertice origen, Vertice destino) {
 		String arista = nombreArista(origen, destino);
 
@@ -404,12 +395,11 @@ public class VentanaPrincipal extends JFrame {
 
 		modeloAristas.removeElement(arista);
 
-		// El grafo cambió: se borran los resultados viejos, pero NO se reubican los vértices
 		limpiarResultados();
 		grafoPanel.limpiarSolucion();
 	}
 
-	// Mismo formato que actualizarListas(): el nombre menor primero
+
 	private String nombreArista(Vertice a, Vertice b) {
 		String x = a.getNombre();
 		String y = b.getNombre();
@@ -523,17 +513,17 @@ public class VentanaPrincipal extends JFrame {
        
 		mostrarResultado(solucion, tiempoMs, lblSolucionGenetico, lblTamGenetico, lblTiempoGenetico, Color.ORANGE);
 	}
-	private void iniciarTestEstres() {
+	private void iniciarTestStress() {
 
-	    TestEstres prueba = new TestEstres();
-	    testEstres = prueba;
+	    TestStress prueba = new TestStress();
+	    testStress = prueba;
 
-	    areaResultadosEstres.setText("Iniciando test de estres...\n");
+	    areaResultadosStress.setText("Iniciando test de stress...\n");
 
-	    btnIniciarEstres.setEnabled(false);
-	    btnDetenerEstres.setEnabled(true);
+	    btnIniciarStress.setEnabled(false);
+	    btnDetenerStress.setEnabled(true);
 
-	    trabajadorEstres = new SwingWorker<Void, String>() {
+	    trabajadorStress = new SwingWorker<Void, String>() {
 
 	        @Override
 	        protected Void doInBackground() {
@@ -557,7 +547,7 @@ public class VentanaPrincipal extends JFrame {
 	        protected void process(List<String> resultados) {
 
 	            for (String resultado : resultados) {
-	                areaResultadosEstres.append(resultado + "\n");
+	                areaResultadosStress.append(resultado + "\n");
 	            }
 	        }
 
@@ -565,27 +555,27 @@ public class VentanaPrincipal extends JFrame {
 	        protected void done() {
 
 	            if (prueba.estaDetenido()) {
-	                areaResultadosEstres.append("TEST DETENIDO POR EL USUARIO\n");
+	                areaResultadosStress.append("TEST DETENIDO POR EL USUARIO\n");
 	            } else {
-	                areaResultadosEstres.append( "TEST FINALIZADO\n");
+	                areaResultadosStress.append( "TEST FINALIZADO\n");
 	            }
 
-	            btnIniciarEstres.setEnabled(true);
-	            btnDetenerEstres.setEnabled(false);
+	            btnIniciarStress.setEnabled(true);
+	            btnDetenerStress.setEnabled(false);
 	        }
 	    };
 
-	    trabajadorEstres.execute();
+	    trabajadorStress.execute();
 	}
-	private void detenerTestEstres() {
+	private void detenerTestStress() {
 
-	    if (testEstres != null && !testEstres.estaDetenido()) {
+	    if (testStress != null && !testStress.estaDetenido()) {
 
-	        testEstres.detener();
+	        testStress.detener();
 
-	        areaResultadosEstres.append( "Solicitando detener el test...\n");
+	        areaResultadosStress.append( "Solicitando detener el test...\n");
 
-	        btnDetenerEstres.setEnabled(false);
+	        btnDetenerStress.setEnabled(false);
 	    }
 	}
 	private void mostrarResultado(Set<Vertice> solucion, double tiempoMs, JLabel lblSolucion, JLabel lblTam,
