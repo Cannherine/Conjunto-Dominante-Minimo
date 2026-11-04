@@ -29,7 +29,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
+import javax.swing.JToggleButton;
+import javax.swing.ButtonGroup;
 import algoritmo.DominanteBacktracking;
 import algoritmo.DominanteGoloso;
 import archivo.LectorGrafo;
@@ -112,8 +113,55 @@ public class VentanaPrincipal extends JFrame {
 		grafoPanel = new GrafoPanel(grafo);
 		grafoPanel.setAlHacerClickEnEspacioVacio(this::agregarVerticeEnPosicion);
 		grafoPanel.setAlSeleccionarDosVertices(this::gestionarArista);
-		contentPane.add(grafoPanel, BorderLayout.CENTER);
+		grafoPanel.setAlSeleccionarVerticeParaEliminar( this::eliminarVerticeDesdeGrafo);
+		grafoPanel.setAlSeleccionarAristaParaEliminar(this::proponerEliminarArista);
+		JPanel panelEditor = new JPanel(new BorderLayout());
+		JPanel barraHerramientas = new JPanel();
 
+		JToggleButton btnVertice = new JToggleButton("○ Vértice");
+		JToggleButton btnArista = new JToggleButton("— Arista");
+		JToggleButton btnMover = new JToggleButton("✥ Mover");
+		JToggleButton btnEliminar = new JToggleButton("✕ Eliminar");
+
+		btnEliminar.setToolTipText(  "Seleccioná un vértice o una arista para eliminarlo.");
+		btnVertice.setToolTipText( "Clic izquierdo en el espacio blanco para crear un vértice.");
+
+			btnArista.setToolTipText( "Clic derecho sobre dos vértices para unirlos o eliminar su arista.");
+
+			btnMover.setToolTipText(  "Mantené presionado el clic izquierdo sobre un vértice y arrastralo.");
+		ButtonGroup grupoHerramientas = new ButtonGroup();
+
+		grupoHerramientas.add(btnVertice);
+		grupoHerramientas.add(btnArista);
+		grupoHerramientas.add(btnMover);
+		grupoHerramientas.add(btnEliminar);
+		
+		btnVertice.setSelected(true);
+
+		barraHerramientas.add(btnVertice);
+		barraHerramientas.add(btnArista);
+		barraHerramientas.add(btnMover);
+		barraHerramientas.add(btnEliminar);
+
+		btnVertice.addActionListener(e ->  grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.VERTICE));
+
+	btnArista.addActionListener(e -> grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.ARISTA));
+
+	btnMover.addActionListener(e ->  grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.MOVER));
+	btnEliminar.addActionListener(e ->
+    grafoPanel.setModoEdicion(GrafoPanel.ModoEdicion.ELIMINAR));	
+	JLabel lblInstrucciones = new JLabel("○ Vértice: hacé clic izquierdo en el espacio blanco para crear un vértice.");
+
+			lblInstrucciones.setHorizontalAlignment(JLabel.CENTER);
+
+			JPanel panelSuperior = new JPanel(new BorderLayout());
+
+			panelSuperior.add(barraHerramientas, BorderLayout.NORTH);
+
+			panelEditor.add(panelSuperior, BorderLayout.NORTH);
+			panelEditor.add(grafoPanel, BorderLayout.CENTER);
+
+			contentPane.add(panelEditor, BorderLayout.CENTER);
 		JScrollPane scrollResultados = new JScrollPane(crearPanelResultados());
 
 		scrollResultados.setPreferredSize(new Dimension(280, 0));
@@ -328,7 +376,20 @@ public class VentanaPrincipal extends JFrame {
 			mostrarMensaje("Vértice eliminado: " + nombre);
 		}
 	}
+	private void eliminarVerticeDesdeGrafo(Vertice vertice) {
 
+	    int respuesta = JOptionPane.showConfirmDialog(this,"¿Querés eliminar el vértice " + vertice.getNombre() + "?","Confirmar eliminación",JOptionPane.YES_NO_OPTION );
+
+	    if (respuesta != JOptionPane.YES_OPTION) {
+	        return;
+	    }
+
+	    if (grafo.eliminarVertice(vertice)) {
+	        actualizarListas();
+	        actualizarVistaGrafo();
+	        mostrarMensaje("Vértice eliminado: " + vertice.getNombre());
+	    }
+	}
 	private void agregarArista() {
 		String origen = (String) comboOrigen.getSelectedItem();
 		String destino = (String) comboDestino.getSelectedItem();
@@ -530,7 +591,7 @@ public class VentanaPrincipal extends JFrame {
 	        @Override
 	        protected Void doInBackground() {
 
-	            prueba.ejecutar(5, 35, (vertices, resultado) -> {
+	            prueba.ejecutar(5, 100, (vertices, resultado) -> {
 
 	                double tiempoMs =
 	                        resultado.getTiempoNanosegundos() / 1_000_000.0;
