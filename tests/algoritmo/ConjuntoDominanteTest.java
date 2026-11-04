@@ -1,21 +1,21 @@
 package algoritmo;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import algoritmo.ConjuntoDominante;
 import negocio.Grafo;
 import negocio.Vertice;
 
 public class ConjuntoDominanteTest {
-	  @Test(expected = IllegalArgumentException.class)
+	  @Test
 	    public void noAceptarGrafoNulo() {
-	        ConjuntoDominante.esDominante(null, null);
+	        assertThrows(IllegalArgumentException.class, () -> ConjuntoDominante.esDominante(null, null));
 	    }
 
 @Test

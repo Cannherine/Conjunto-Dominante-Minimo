@@ -1,10 +1,11 @@
 package negocio;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import negocio.Grafo;
 import negocio.Vertice;
@@ -135,11 +136,11 @@ public class GrafoTest {
 		assertTrue(grafo.obtenerVecinos(a).isEmpty());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void obtenerVecinosDeVerticeInexistente() {
 		Grafo grafo = new Grafo();
 
-		grafo.obtenerVecinos(new Vertice("A"));
+		assertThrows(IllegalArgumentException.class, () -> grafo.obtenerVecinos(new Vertice("A")));
 	}
 
 	@Test

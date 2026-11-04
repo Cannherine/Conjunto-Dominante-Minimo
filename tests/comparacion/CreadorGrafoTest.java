@@ -1,10 +1,11 @@
 package comparacion;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import algoritmo.ConjuntoDominante;
 import comparacion.CompararAlgoritmos;
@@ -50,10 +51,10 @@ public void generarCaminoUnVertice() {
     assertEquals(0, grafo.cantidadAristas());
 }
 
-@Test(expected = IllegalArgumentException.class)
+@Test
 public void generarCaminoCantidadNegativa() {
 
-	CreadorGrafo.generarCamino(-1);
+	assertThrows(IllegalArgumentException.class, () -> CreadorGrafo.generarCamino(-1));
 }
 
 @Test

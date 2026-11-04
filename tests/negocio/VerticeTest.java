@@ -1,6 +1,6 @@
 package negocio;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import negocio.Vertice;
 
@@ -43,19 +43,19 @@ public void toStringDevuelveElNombre() {
     assertEquals("A", v.toString());
 }
 
-@Test(expected = IllegalArgumentException.class)
+@Test
 public void noPermiteNombreVacio() {
-    new Vertice("");
+    assertThrows(IllegalArgumentException.class, () -> new Vertice(""));
 }
 
-@Test(expected = IllegalArgumentException.class)
+@Test
 public void noPermiteNombreNulo() {
-    new Vertice(null);
+    assertThrows(IllegalArgumentException.class, () -> new Vertice(null));
 }
 
-@Test(expected = IllegalArgumentException.class)
+@Test
 public void noPermiteNombreSoloConEspacios() {
-    new Vertice("   ");
+    assertThrows(IllegalArgumentException.class, () -> new Vertice("   "));
 }
 
 @Test

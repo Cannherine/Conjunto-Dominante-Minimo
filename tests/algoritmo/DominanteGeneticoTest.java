@@ -1,13 +1,13 @@
 package algoritmo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import algoritmo.ConjuntoDominante;
 import algoritmo.DominanteGenetico;
@@ -18,7 +18,7 @@ public class DominanteGeneticoTest {
 
     private DominanteGenetico genetico;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         genetico = new DominanteGenetico();
     }
@@ -47,9 +47,9 @@ public class DominanteGeneticoTest {
 
         Set<Vertice> solucion = genetico.resolver(grafo);
 
-        assertEquals("Debe contener exactamente 1 vértice", 1, solucion.size());
+        assertEquals(1, solucion.size(), "Debe contener exactamente 1 vértice");
         assertTrue(solucion.contains(v1));
-        assertTrue("Debe ser un conjunto dominante", ConjuntoDominante.esDominante(grafo, solucion));
+        assertTrue(ConjuntoDominante.esDominante(grafo, solucion), "Debe ser un conjunto dominante");
     }
 
     @Test
@@ -66,7 +66,7 @@ public class DominanteGeneticoTest {
 
         Set<Vertice> solucion = genetico.resolver(grafo);
 
-        assertEquals("Al no haber aristas, debe seleccionar todos los vértices", 3, solucion.size());
+        assertEquals(3, solucion.size(), "Al no haber aristas, debe seleccionar todos los vértices");
         assertTrue(ConjuntoDominante.esDominante(grafo, solucion));
     }
 
@@ -94,8 +94,8 @@ public class DominanteGeneticoTest {
         Set<Vertice> solucion = genetico.resolver(grafo);
 
         
-        assertTrue("La solución debe ser un conjunto válido", ConjuntoDominante.esDominante(grafo, solucion));
-        assertEquals("El tamaño óptimo es 1 (solo el centro)", 1, solucion.size());
+        assertTrue(ConjuntoDominante.esDominante(grafo, solucion), "La solución debe ser un conjunto válido");
+        assertEquals(1, solucion.size(), "El tamaño óptimo es 1 (solo el centro)");
         assertTrue(solucion.contains(centro));
     }
 
@@ -123,7 +123,7 @@ public class DominanteGeneticoTest {
         Set<Vertice> solucion = genetico.resolver(grafo);
 
         assertTrue(ConjuntoDominante.esDominante(grafo, solucion));
-        assertEquals("Cualquier vértice domina el grafo, el tamaño debe ser 1", 1, solucion.size());
+        assertEquals(1, solucion.size(), "Cualquier vértice domina el grafo, el tamaño debe ser 1");
     }
     @Test
     public void testSolucionSiempreDominante() {
@@ -148,8 +148,7 @@ public class DominanteGeneticoTest {
         for (int i = 0; i < 20; i++) {
             Set<Vertice> solucion = genetico.resolver(grafo);
 
-            assertTrue( "El genetico debe devolver un conjunto dominante",
-                ConjuntoDominante.esDominante(grafo, solucion));
+            assertTrue(ConjuntoDominante.esDominante(grafo, solucion), "El genetico debe devolver un conjunto dominante");
         }
     }
 }
