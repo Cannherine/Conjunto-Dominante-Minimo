@@ -28,9 +28,40 @@ public class DominanteGenetico {
             }
             pop = nuevaPop;
         }
-        return extraerSolucion(mejorGlobal, vertices);
-    }
 
+        Individuo mejorFinal = obtenerMejor(pop);
+
+        if (mejorFinal.fitness < mejorGlobal.fitness) {
+            mejorGlobal = mejorFinal;
+        }
+
+        Set<Vertice> solucion = extraerSolucion(mejorGlobal, vertices);
+
+        repararSolucion(grafo, solucion);
+
+        return solucion;
+    }
+    private void repararSolucion(Grafo grafo, Set<Vertice> solucion) {
+        for (Vertice vertice : grafo.obtenerVertices()) {
+
+            if (solucion.contains(vertice)) {
+                continue;
+            }
+
+            boolean dominado = false;
+
+            for (Vertice vecino : grafo.obtenerVecinos(vertice)) {
+                if (solucion.contains(vecino)) {
+                    dominado = true;
+                    break;
+                }
+            }
+
+            if (!dominado) {
+                solucion.add(vertice);
+            }
+        }
+    }
     private Individuo seleccion(List<Individuo> pop) {
         Individuo mejor = pop.get(rand.nextInt(poblacion));
         for (int i = 1; i < 3; i++) { // Torneo de tamaño 3
@@ -51,11 +82,9 @@ public class DominanteGenetico {
         for (int i = 0; i < ind.cromosoma.length; i++) if (ind.cromosoma[i]) sol.add(v.get(i));
         return sol;
     }
-
     private class Individuo {
-        boolean[] cromosoma;
-        int fitness;
-
+        private final boolean[] cromosoma;
+        private int fitness;
         
         Individuo(List<Vertice> v, Grafo g) {
             cromosoma = new boolean[v.size()];
@@ -84,7 +113,8 @@ public class DominanteGenetico {
                 }
             }
             int noDominados = grafo.cantidadVertices() - dominados.size();
-            fitness = tamanoConjunto + (noDominados * penalizacion);
+
+            fitness = tamanoConjunto + noDominados * (grafo.cantidadVertices() + 1);
         }
     }
 }

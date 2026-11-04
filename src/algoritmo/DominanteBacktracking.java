@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 
 import negocio.Grafo;
 import negocio.Vertice;
@@ -28,6 +29,10 @@ public class DominanteBacktracking {
 	}
 
 	private void buscar(Grafo grafo, List<Vertice> vertices, int indice, Set<Vertice> actual, Set<Vertice> mejor) {
+
+		  if (Thread.currentThread().isInterrupted()) {
+		        throw new CancellationException("Backtracking interrumpido");
+		    }
 
 		if (actual.size() >= mejor.size()) {
 			return;

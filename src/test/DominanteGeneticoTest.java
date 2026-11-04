@@ -125,4 +125,31 @@ public class DominanteGeneticoTest {
         assertTrue(ConjuntoDominante.esDominante(grafo, solucion));
         assertEquals("Cualquier vértice domina el grafo, el tamaño debe ser 1", 1, solucion.size());
     }
+    @Test
+    public void testSolucionSiempreDominante() {
+        Grafo grafo = new Grafo();
+
+        Vertice a = new Vertice("A");
+        Vertice b = new Vertice("B");
+        Vertice c = new Vertice("C");
+        Vertice d = new Vertice("D");
+        Vertice e = new Vertice("E");
+
+        grafo.agregarVertice(a);
+        grafo.agregarVertice(b);
+        grafo.agregarVertice(c);
+        grafo.agregarVertice(d);
+        grafo.agregarVertice(e);
+
+        grafo.agregarArista(a, b);
+        grafo.agregarArista(b, c);
+        grafo.agregarArista(c, d);
+
+        for (int i = 0; i < 20; i++) {
+            Set<Vertice> solucion = genetico.resolver(grafo);
+
+            assertTrue( "El genetico debe devolver un conjunto dominante",
+                ConjuntoDominante.esDominante(grafo, solucion));
+        }
+    }
 }

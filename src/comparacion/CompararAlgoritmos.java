@@ -10,7 +10,7 @@ import negocio.Grafo;
 import negocio.Vertice;
 
 public class CompararAlgoritmos {
-
+	private static final int repeticiones = 10;
 	 public ResultadoAlgoritmo medirBacktracking(Grafo grafo) {
 
 	        DominanteBacktracking algoritmo = new DominanteBacktracking();
@@ -31,7 +31,25 @@ public class CompararAlgoritmos {
 	        
 	        return medirTiempo(grafo, algoritmo::resolver);
 	    }
+	    public long medirPromedioGenetico(Grafo grafo) {
 
+	        DominanteGenetico algoritmo = new DominanteGenetico();
+
+	        return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
+	    }
+	    public long medirPromedioBacktracking(Grafo grafo) {
+
+	        DominanteBacktracking algoritmo = new DominanteBacktracking();
+
+	        return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
+	    }
+
+	    public long medirPromedioGoloso(Grafo grafo) {
+
+	        DominanteGoloso algoritmo = new DominanteGoloso();
+
+	        return calcularPromedio(grafo, algoritmo::resolver, repeticiones);
+	    }
 	    public long calcularPromedio(Grafo grafo, Function<Grafo, Set<Vertice>> resolver, int repeticiones) {
 
 	        validarArgumentos(grafo, resolver);
