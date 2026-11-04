@@ -127,7 +127,7 @@ public class VentanaPrincipal extends JFrame {
 		panel.setPreferredSize(new Dimension(230, 0));
 		panel.setBackground(new Color(220, 235, 250));
 
-		btnCargarGrafo = new JButton("Cargar grafo desde TXT");
+		btnCargarGrafo = new JButton("Cargar archivo de texto");
 		panel.add(btnCargarGrafo);
 
 		panel.add(new JLabel("Nombre del vértice:"));
@@ -233,9 +233,10 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	private void cargarGrafo() {
-		JFileChooser selector = new JFileChooser();
-		selector.setDialogTitle("Seleccionar archivo de grafo");
+		JFileChooser selector = new JFileChooser(new File(System.getProperty("user.dir")));
+		selector.setDialogTitle("Seleccionar archivo de texto");
 		selector.setFileFilter(new FileNameExtensionFilter("Archivos TXT", "txt"));
+		selector.setFileFilter(new FileNameExtensionFilter("Archivos JSON", "json"));
 
 		if (selector.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
 			return;
