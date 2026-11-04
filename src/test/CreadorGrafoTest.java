@@ -71,14 +71,11 @@ public void compararCaminosDistintosTamaños() {
         
         ResultadoAlgoritmo genetico = comparador.medirGenetico(grafo);
 
-        assertTrue(ConjuntoDominante.esDominante(
-                grafo, backtracking.getSolucion()));
+        assertTrue(ConjuntoDominante.esDominante(grafo, backtracking.getSolucion()));
 
-        assertTrue(ConjuntoDominante.esDominante(
-                grafo, goloso.getSolucion()));
+        assertTrue(ConjuntoDominante.esDominante(grafo, goloso.getSolucion()));
         
-        assertTrue(ConjuntoDominante.esDominante(
-                grafo, genetico.getSolucion()));
+        assertTrue(ConjuntoDominante.esDominante(grafo, genetico.getSolucion()));
 
 
         System.out.println("Vertices: " + n);
@@ -91,8 +88,8 @@ public void compararCaminosDistintosTamaños() {
                 + goloso.getTiempoNanosegundos() + " ns");
         
         System.out.println("Genetico: "
-                + goloso.getTamaño() + " vertices, "
-                + goloso.getTiempoNanosegundos() + " ns");
+                + genetico.getTamaño() + " vertices, "
+                + genetico.getTiempoNanosegundos() + " ns");
 
         System.out.println("----------------------");
     }
@@ -119,5 +116,43 @@ public void generarGrafoCompletoCuatroVertices() {
     assertTrue(grafo.existeArista(v1, v3));
     assertTrue(grafo.existeArista(v2, v3));
 }
+@Test
+public void compararTiemposPromedio() {
 
+    Grafo grafo = CreadorGrafo.generarCamino(6);
+
+    CompararAlgoritmos comparador = new CompararAlgoritmos();
+
+    long tiempoBacktracking =
+            comparador.medirPromedioBacktracking(grafo);
+
+    long tiempoGoloso =
+            comparador.medirPromedioGoloso(grafo);
+
+    long tiempoGenetico =
+            comparador.medirPromedioGenetico(grafo);
+
+    System.out.println("TIEMPOS PROMEDIO - 6 VERTICES");
+
+    System.out.printf("Backtracking: %.3f ms%n", tiempoBacktracking / 1_000_000.0);
+
+    System.out.printf("Goloso: %.3f ms%n", tiempoGoloso / 1_000_000.0);
+
+    System.out.printf("Genetico: %.3f ms%n",tiempoGenetico / 1_000_000.0);
+
+    assertTrue(tiempoBacktracking >= 0);
+    assertTrue(tiempoGoloso >= 0);
+    assertTrue(tiempoGenetico >= 0);
+}
+@Test
+public void generarGrafoAleatorioDiezVertices() {
+
+    Grafo grafo = CreadorGrafo.generarAleatorio(10);
+
+    assertEquals(10, grafo.cantidadVertices());
+
+    assertTrue(grafo.cantidadAristas() >= 0);
+
+    assertTrue(grafo.cantidadAristas() <= 45);
+}
 }

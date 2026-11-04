@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,7 +23,9 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -33,6 +36,7 @@ import negocio.Grafo;
 import negocio.Vertice;
 import comparacion.CompararAlgoritmos;
 import comparacion.ResultadoAlgoritmo;
+import comparacion.TestEstres;
 
 
 
@@ -71,6 +75,13 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lblSolucionGenetico;
 	private JLabel lblTamGenetico;
 	private JLabel lblTiempoGenetico;
+	
+	private JButton btnIniciarEstres;
+	private JButton btnDetenerEstres;
+	private JTextArea areaResultadosEstres;
+	
+	private TestEstres testEstres;
+	private SwingWorker<Void, String> trabajadorEstres;
 
 	/**
 	 * Launch the application.
@@ -105,8 +116,11 @@ public class VentanaPrincipal extends JFrame {
 		grafoPanel = new GrafoPanel(grafo);
 		contentPane.add(grafoPanel, BorderLayout.CENTER);
 
-		contentPane.add(crearPanelResultados(), BorderLayout.EAST);
+		JScrollPane scrollResultados = new JScrollPane(crearPanelResultados());
 
+		scrollResultados.setPreferredSize(new Dimension(280, 0));
+
+		contentPane.add(scrollResultados, BorderLayout.EAST);
 		configurarEventos();
 	}
 
@@ -157,7 +171,8 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	private JPanel crearPanelResultados() {
-		JPanel panel = new JPanel(new GridLayout(0, 1, 5, 8));
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setPreferredSize(new Dimension(250, 0));
 		panel.setBackground(new Color(235, 225, 245));
 
@@ -189,7 +204,20 @@ public class VentanaPrincipal extends JFrame {
 		panel.add(lblSolucionGenetico);
 		panel.add(lblTamGenetico);
 		panel.add(lblTiempoGenetico);
+		panel.add(new JLabel("TEST DE ESTRES"));
 
+		btnIniciarEstres = new JButton("Iniciar test de estres");
+		panel.add(btnIniciarEstres);
+
+		btnDetenerEstres = new JButton("Detener test");
+		btnDetenerEstres.setEnabled(false);
+		panel.add(btnDetenerEstres);
+
+		areaResultadosEstres = new JTextArea();
+		areaResultadosEstres.setEditable(false);
+
+		JScrollPane scrollEstres = new JScrollPane(areaResultadosEstres);
+		panel.add(scrollEstres);
 		return panel;
 	}
 
@@ -202,6 +230,8 @@ public class VentanaPrincipal extends JFrame {
 		btnBacktracking.addActionListener(e -> ejecutarBacktracking());
 		btnGoloso.addActionListener(e -> ejecutarGoloso());
 		btnGenetico.addActionListener(e -> ejecutarGenetico());
+		btnIniciarEstres.addActionListener(e -> iniciarTestEstres());
+		btnDetenerEstres.addActionListener(e -> detenerTestEstres());
 	}
 
 	private void cargarGrafo() {
@@ -383,8 +413,7 @@ public class VentanaPrincipal extends JFrame {
 
 		Set<Vertice> solucion = resultado.getSolucion();
 
-		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;
-		mostrarResultado(solucion, tiempoMs, lblSolucionGoloso, lblTamGoloso, lblTiempoGoloso, Color.GREEN);
+		double tiempoMs = resultado.getTiempoNanosegundos() / 1_000_000.0;	mostrarResultado(solucion, tiempoMs, lblSolucionGoloso, lblTamGoloso, lblTiempoGoloso, Color.GREEN);
 	}
 	
 	private void ejecutarGenetico() {
@@ -401,7 +430,71 @@ public class VentanaPrincipal extends JFrame {
        
 		mostrarResultado(solucion, tiempoMs, lblSolucionGenetico, lblTamGenetico, lblTiempoGenetico, Color.ORANGE);
 	}
+	private void iniciarTestEstres() {
 
+	    TestEstres prueba = new TestEstres();
+	    testEstres = prueba;
+
+	    areaResultadosEstres.setText("Iniciando test de estres...\n");
+
+	    btnIniciarEstres.setEnabled(false);
+	    btnDetenerEstres.setEnabled(true);
+
+	    trabajadorEstres = new SwingWorker<Void, String>() {
+
+	        @Override
+	        protected Void doInBackground() {
+
+	            prueba.ejecutar(5, 35, (vertices, resultado) -> {
+
+	                double tiempoMs =
+	                        resultado.getTiempoNanosegundos() / 1_000_000.0;
+
+	                String texto = String.format(
+	                        "Vertices: %d - Tiempo: %.3f ms",
+	                        vertices, tiempoMs);
+
+	                publish(texto);
+	            });
+
+	            return null;
+	        }
+
+	        @Override
+	        protected void process(List<String> resultados) {
+
+	            for (String resultado : resultados) {
+	                areaResultadosEstres.append(resultado + "\n");
+	            }
+	        }
+
+	        @Override
+	        protected void done() {
+
+	            if (prueba.estaDetenido()) {
+	                areaResultadosEstres.append("TEST DETENIDO POR EL USUARIO\n");
+	            } else {
+	                areaResultadosEstres.append( "TEST FINALIZADO\n");
+	            }
+
+	            btnIniciarEstres.setEnabled(true);
+	            btnDetenerEstres.setEnabled(false);
+	        }
+	    };
+
+	    trabajadorEstres.execute();
+	}
+	private void detenerTestEstres() {
+
+	    if (testEstres != null && !testEstres.estaDetenido()) {
+
+	        testEstres.detener();
+
+	        areaResultadosEstres.append( "Solicitando detener el test...\n");
+
+	        btnDetenerEstres.setEnabled(false);
+	    }
+	}
 	private void mostrarResultado(Set<Vertice> solucion, double tiempoMs, JLabel lblSolucion, JLabel lblTam,
 			JLabel lblTiempo, Color color) {
 		lblSolucion.setText("Solución: " + formatearSolucion(solucion));
