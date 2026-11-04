@@ -127,7 +127,7 @@ public class VentanaPrincipal extends JFrame {
 		panel.setPreferredSize(new Dimension(230, 0));
 		panel.setBackground(new Color(220, 235, 250));
 
-		btnCargarGrafo = new JButton("Cargar archivo de texto");
+		btnCargarGrafo = new JButton("Cargar archivo (TXT/JSON)");
 		panel.add(btnCargarGrafo);
 
 		panel.add(new JLabel("Nombre del vértice:"));
@@ -234,27 +234,29 @@ public class VentanaPrincipal extends JFrame {
 
 	private void cargarGrafo() {
 		JFileChooser selector = new JFileChooser(new File(System.getProperty("user.dir")));
-		selector.setDialogTitle("Seleccionar archivo de texto");
-		selector.setFileFilter(new FileNameExtensionFilter("Archivos TXT", "txt"));
-		selector.setFileFilter(new FileNameExtensionFilter("Archivos JSON", "json"));
+	    selector.setDialogTitle("Seleccionar archivo de grafo");
+	    selector.setAcceptAllFileFilterUsed(false);
+	    selector.addChoosableFileFilter(new FileNameExtensionFilter("Grafos (TXT o JSON)", "txt", "json"));
+	    selector.addChoosableFileFilter(new FileNameExtensionFilter("Archivos TXT", "txt"));
+	    selector.addChoosableFileFilter(new FileNameExtensionFilter("Archivos JSON", "json"));
 
-		if (selector.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
-			return;
-		}
+	    if (selector.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
+	        return;
+	    }
 
-		File archivoSeleccionado = selector.getSelectedFile();
-		try {
-			LectorGrafo lector = new LectorGrafo();
-			Grafo nuevoGrafo = lector.cargar(archivoSeleccionado);
+	    File archivoSeleccionado = selector.getSelectedFile();
+	    try {
+	        LectorGrafo lector = new LectorGrafo();
+	        Grafo nuevoGrafo = lector.cargar(archivoSeleccionado);
 
-			grafo = nuevoGrafo;
-			grafoPanel.setGrafo(grafo);
-			actualizarListas();
-			actualizarVistaGrafo();
-			mostrarMensaje("Grafo cargado correctamente.");
-		} catch (IOException | IllegalArgumentException ex) {
-			mostrarError("Error al cargar el archivo: " + ex.getMessage());
-		}
+	        grafo = nuevoGrafo;
+	        grafoPanel.setGrafo(grafo);
+	        actualizarListas();
+	        actualizarVistaGrafo();
+	        mostrarMensaje("Grafo cargado correctamente.");
+	    } catch (IOException | IllegalArgumentException ex) {
+	        mostrarError("Error al cargar el archivo: " + ex.getMessage());
+	    }
 	}
 
 	private void agregarVertice() {
