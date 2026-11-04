@@ -22,6 +22,18 @@ import negocio.Grafo;
 import negocio.Vertice;
 
 public class GrafoPanel extends JPanel {
+	public enum ModoEdicion {
+	    VERTICE,
+	    ARISTA,
+	    MOVER,
+	    ELIMINAR
+	}
+
+	private ModoEdicion modoActual = ModoEdicion.VERTICE;
+
+	public void setModoEdicion(ModoEdicion modo) {
+	    this.modoActual = modo;
+	}
 	private static final long serialVersionUID = 1L;
 
     private static final int DIAMETRO_VERTICE = 40;
@@ -41,6 +53,8 @@ public class GrafoPanel extends JPanel {
     private Consumer<Point> alHacerClickEnEspacioVacio;
     private Point puntoPresionado;
     private BiConsumer<Vertice, Vertice> alSeleccionarDosVertices;
+    private Consumer<Vertice> alSeleccionarVerticeParaEliminar;
+    private BiConsumer<Vertice, Vertice> alSeleccionarAristaParaEliminar;
     private Point puntoPresionadoDerecho;
     private Vertice aristaOrigen;
     private Vertice aristaDestino;
@@ -53,20 +67,24 @@ public class GrafoPanel extends JPanel {
 
     private void configurarMouse() {
         MouseAdapter mouse = new MouseAdapter() {
-            @Override
+           
+        	@Override
             public void mousePressed(MouseEvent e) {
                 boolean izquierdo = SwingUtilities.isLeftMouseButton(e);
                 Vertice bajoElMouse = buscarVertice(e.getX(), e.getY());
 
-                // Solo el boton izquierdo arrastra vertices
-                verticeSeleccionado = izquierdo ? bajoElMouse : null;
+             // Solo permite mover vértices si está seleccionada la herramienta MOVER
+                verticeSeleccionado = (modoActual == ModoEdicion.MOVER && izquierdo)
+                        ? bajoElMouse : null;
 
-                // Posible "click para crear un vertice": izquierdo sobre un espacio vacio
-                puntoPresionado = (izquierdo && bajoElMouse == null) ? e.getPoint() : null;
+                // Solo permite crear vértices si está seleccionada VERTICE
+                puntoPresionado = (modoActual == ModoEdicion.VERTICE && izquierdo && bajoElMouse == null)
+                        ? e.getPoint() : null;
 
-                // Posible click derecho para elegir los vertices de una arista
-                puntoPresionadoDerecho = SwingUtilities.isRightMouseButton(e) ? e.getPoint() : null;
-            }
+                // Solo permite seleccionar extremos de aristas en modo ARISTA
+                puntoPresionadoDerecho = (modoActual == ModoEdicion.ARISTA && SwingUtilities.isRightMouseButton(e))
+                        ? e.getPoint() : null;
+        	}
 
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -83,6 +101,27 @@ public class GrafoPanel extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+            	if (modoActual == ModoEdicion.ELIMINAR && SwingUtilities.isLeftMouseButton(e)) {
+
+            	    Vertice vertice = buscarVertice(e.getX(), e.getY());
+
+            	    if (vertice != null) {
+
+            	        if (alSeleccionarVerticeParaEliminar != null) {
+            	            alSeleccionarVerticeParaEliminar.accept(vertice);
+            	        }
+
+            	    } else {
+
+            	        Vertice[] arista = buscarArista(e.getX(), e.getY());
+
+            	        if (arista != null && alSeleccionarAristaParaEliminar != null) {
+            	            alSeleccionarAristaParaEliminar.accept(arista[0], arista[1]);
+            	        }
+            	    }
+
+            	    return;
+            	}
                 verticeSeleccionado = null;
 
                 Point inicio = puntoPresionado;
@@ -141,7 +180,14 @@ public class GrafoPanel extends JPanel {
     public void setAlSeleccionarDosVertices(BiConsumer<Vertice, Vertice> accion) {
         this.alSeleccionarDosVertices = accion;
     }
+    public void setAlSeleccionarVerticeParaEliminar(Consumer<Vertice> accion) {
+        this.alSeleccionarVerticeParaEliminar = accion;
+    }
+    public void setAlSeleccionarAristaParaEliminar(
+            BiConsumer<Vertice, Vertice> accion) {
 
+        this.alSeleccionarAristaParaEliminar = accion;
+    }
     // Click derecho: 1) marca el primer vertice, 2) al marcar otro distinto avisa a quien
     // escucha. Click derecho sobre el mismo vertice o en un espacio vacio cancela.
     private void procesarClickDerecho(Point punto) {
@@ -318,7 +364,40 @@ public class GrafoPanel extends JPanel {
         }
         return null;
     }
+    private Vertice[] buscarArista(int x, int y) {
 
+        for (Vertice origen : grafo.obtenerVertices()) {
+
+            Point p1 = posiciones.get(origen);
+
+            if (p1 == null) {
+                continue;
+            }
+
+            for (Vertice destino : grafo.obtenerVecinos(origen)) {
+
+                Point p2 = posiciones.get(destino);
+
+                if (p2 == null) {
+                    continue;
+                }
+
+                double x1 = p1.x + RADIO_VERTICE;
+                double y1 = p1.y + RADIO_VERTICE;
+
+                double x2 = p2.x + RADIO_VERTICE;
+                double y2 = p2.y + RADIO_VERTICE;
+
+                double distancia = java.awt.geom.Line2D.ptSegDist( x1, y1, x2, y2, x, y);
+
+                if (distancia <= 8) {
+                    return new Vertice[] {origen, destino};
+                }
+            }
+        }
+
+        return null;
+    }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

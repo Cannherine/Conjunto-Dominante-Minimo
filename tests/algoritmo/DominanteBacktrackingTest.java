@@ -1,4 +1,4 @@
-package test;
+package algoritmo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -9,20 +9,19 @@ import java.util.Set;
 import org.junit.Test;
 
 import algoritmo.ConjuntoDominante;
-import algoritmo.DominanteGoloso;
+import algoritmo.DominanteBacktracking;
 import negocio.Grafo;
 import negocio.Vertice;
 
-public class DominanteGolosoTest {
-	 private void agregarVertices(Grafo grafo, Vertice... vertices) {
+public class DominanteBacktrackingTest {
+	   private void agregarVertices(Grafo grafo, Vertice... vertices) {
 	        for (Vertice v : vertices) {
 	            grafo.agregarVertice(v);
 	        }
 	    }
-	 private Set<Vertice> verificarSolucion(
-	            Grafo grafo, int tamañoEsperado) {
+	   private Set<Vertice> verificarSolucion( Grafo grafo, int tamañoEsperado) {
 
-	        DominanteGoloso algoritmo = new DominanteGoloso();
+	        DominanteBacktracking algoritmo =   new DominanteBacktracking();
 
 	        Set<Vertice> resultado = algoritmo.resolver(grafo);
 
@@ -31,21 +30,19 @@ public class DominanteGolosoTest {
 	        assertTrue(ConjuntoDominante.esDominante(grafo, resultado));
 
 	        return resultado;
-	    }
-	
-	 @Test
-	    public void grafoConUnSoloVertice() {
+	    } 
+	   
+    @Test
+    public void grafoConUnSoloVertice() {
 
-	        Grafo grafo = new Grafo();
-	        Vertice a = new Vertice("A");
+        Grafo grafo = new Grafo();
+        Vertice a = new Vertice("A");
 
-	        agregarVertices(grafo, a);
+        grafo.agregarVertice(a);
 
-	        Set<Vertice> resultado = verificarSolucion(grafo, 1);
-
-	        assertTrue(resultado.contains(a));
-	    
-	    }
+        Set<Vertice> resultado = verificarSolucion(grafo, 1);
+        assertTrue(resultado.contains(a));
+    }
 
 @Test
 public void grafoCaminoTresVertices() {
@@ -68,7 +65,6 @@ public void grafoCaminoTresVertices() {
 
 @Test
 public void grafoConVerticeAislado() {
-
     Grafo grafo = new Grafo();
 
     Vertice a = new Vertice("A");
@@ -86,7 +82,6 @@ public void grafoConVerticeAislado() {
 
 @Test
 public void grafoCompleto() {
-
     Grafo grafo = new Grafo();
 
     Vertice a = new Vertice("A");
@@ -100,7 +95,7 @@ public void grafoCompleto() {
     grafo.agregarArista(b, c);
 
     verificarSolucion(grafo, 1);
-    }
+}
 
 @Test
 public void grafoVacio() {
@@ -114,7 +109,6 @@ public void grafoVacio() {
 
 @Test
 public void grafoDesconectado() {
-
     Grafo grafo = new Grafo();
 
     Vertice a = new Vertice("A");
@@ -131,3 +125,5 @@ public void grafoDesconectado() {
 }
 
 }
+
+
