@@ -31,8 +31,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JToggleButton;
 import javax.swing.ButtonGroup;
-import algoritmo.DominanteBacktracking;
-import algoritmo.DominanteGoloso;
 import archivo.LectorGrafo;
 import negocio.Grafo;
 import negocio.Vertice;
