@@ -23,7 +23,7 @@ public class ResultadoAlgoritmo {
 		return new HashSet<>(solucion);
 	}
 
-	public int getTamaño() {
+	public int getTamanio() {
 		return solucion.size();
 	}
 

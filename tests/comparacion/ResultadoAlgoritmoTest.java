@@ -17,7 +17,7 @@ public class ResultadoAlgoritmoTest {
 
 		ResultadoAlgoritmo resultado = new ResultadoAlgoritmo(solucion, 100);
 
-		assertEquals(1, resultado.getTamaño());
+		assertEquals(1, resultado.getTamanio());
 		assertEquals(100, resultado.getTiempoNanosegundos());
 	}
 
@@ -36,6 +36,6 @@ public class ResultadoAlgoritmoTest {
 		ResultadoAlgoritmo resultado = new ResultadoAlgoritmo(solucion, 100);
 		solucion.add(new Vertice("B"));
 
-		assertEquals(1, resultado.getTamaño());
+		assertEquals(1, resultado.getTamanio());
 	}
 }

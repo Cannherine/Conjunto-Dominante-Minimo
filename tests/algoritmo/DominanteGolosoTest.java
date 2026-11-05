@@ -16,14 +16,14 @@ public class DominanteGolosoTest {
 		}
 	}
 
-	private Set<Vertice> verificarSolucion(Grafo grafo, int tamañoEsperado) {
+	private Set<Vertice> verificarSolucion(Grafo grafo, int tamanioEsperado) {
 
 		DominanteGoloso algoritmo = new DominanteGoloso();
 
 		Set<Vertice> resultado = algoritmo.resolver(grafo);
 
 		assertNotNull(resultado);
-		assertEquals(tamañoEsperado, resultado.size());
+		assertEquals(tamanioEsperado, resultado.size());
 		assertTrue(ConjuntoDominante.esDominante(grafo, resultado));
 
 		return resultado;

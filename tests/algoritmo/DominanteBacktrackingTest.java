@@ -18,14 +18,14 @@ public class DominanteBacktrackingTest {
 		}
 	}
 
-	private Set<Vertice> verificarSolucion(Grafo grafo, int tamañoEsperado) {
+	private Set<Vertice> verificarSolucion(Grafo grafo, int tamanioEsperado) {
 
 		DominanteBacktracking algoritmo = new DominanteBacktracking();
 
 		Set<Vertice> resultado = algoritmo.resolver(grafo);
 
 		assertNotNull(resultado);
-		assertEquals(tamañoEsperado, resultado.size());
+		assertEquals(tamanioEsperado, resultado.size());
 		assertTrue(ConjuntoDominante.esDominante(grafo, resultado));
 
 		return resultado;

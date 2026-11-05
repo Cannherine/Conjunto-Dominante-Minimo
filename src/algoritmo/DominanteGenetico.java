@@ -69,7 +69,7 @@ public class DominanteGenetico {
 
 	private Individuo seleccion(List<Individuo> pop) {
 		Individuo mejor = pop.get(rand.nextInt(poblacion));
-		for (int i = 1; i < 3; i++) { // Torneo de tamaño 3
+		for (int i = 1; i < 3; i++) { 
 			Individuo competidor = pop.get(rand.nextInt(poblacion));
 			if (competidor.fitness < mejor.fitness)
 				mejor = competidor;

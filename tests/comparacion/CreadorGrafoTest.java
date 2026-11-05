@@ -53,7 +53,7 @@ public class CreadorGrafoTest {
 	}
 
 	@Test
-	public void compararCaminosDistintosTamaños() {
+	public void compararCaminosDistintosTamanios() {
 
 		CompararAlgoritmos comparador = new CompararAlgoritmos();
 
@@ -74,14 +74,14 @@ public class CreadorGrafoTest {
 			assertTrue(ConjuntoDominante.esDominante(grafo, genetico.getSolucion()));
 
 			System.out.println("Vertices: " + n);
-			System.out.println("Backtracking: " + backtracking.getTamaño() + " vertices, "
+			System.out.println("Backtracking: " + backtracking.getTamanio() + " vertices, "
 					+ backtracking.getTiempoNanosegundos() + " ns");
 
 			System.out
-					.println("Goloso: " + goloso.getTamaño() + " vertices, " + goloso.getTiempoNanosegundos() + " ns");
+					.println("Goloso: " + goloso.getTamanio() + " vertices, " + goloso.getTiempoNanosegundos() + " ns");
 
 			System.out.println(
-					"Genetico: " + genetico.getTamaño() + " vertices, " + genetico.getTiempoNanosegundos() + " ns");
+					"Genetico: " + genetico.getTamanio() + " vertices, " + genetico.getTiempoNanosegundos() + " ns");
 
 			System.out.println("----------------------");
 		}
