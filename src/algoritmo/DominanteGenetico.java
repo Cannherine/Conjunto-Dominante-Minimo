@@ -27,7 +27,7 @@ public class DominanteGenetico {
 
 			while (nuevaPop.size() < poblacion) {
 				Individuo p1 = seleccion(pop), p2 = seleccion(pop);
-				nuevaPop.add(new Individuo(p1, p2, vertices, grafo)); // Cruce y mutación
+				nuevaPop.add(new Individuo(p1, p2, vertices, grafo));
 			}
 			pop = nuevaPop;
 		}

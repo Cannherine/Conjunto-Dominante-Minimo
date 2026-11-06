@@ -35,7 +35,7 @@ public class DominanteBacktracking {
 			return;
 		}
 
-		if (indice == vertices.size()) {// CASO BASE 
+		if (indice == vertices.size()) {
 			if (ConjuntoDominante.esDominante(grafo, actual)) {
 				mejor.clear();
 				mejor.addAll(actual);

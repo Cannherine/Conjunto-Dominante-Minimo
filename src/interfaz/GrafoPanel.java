@@ -411,7 +411,7 @@ public class GrafoPanel extends JPanel {
 			for (Vertice destino : grafo.obtenerVecinos(origen)) {
 				Point p2 = posiciones.get(destino);
 				if (p1 == null || p2 == null || origen.getNombre().compareTo(destino.getNombre()) > 0) {
-					continue; // cada arista se dibuja una sola vez
+					continue;
 				}
 
 				boolean dominada = solucionActual != null
@@ -443,7 +443,7 @@ public class GrafoPanel extends JPanel {
 			int y = posicion.y;
 			boolean enSolucion = solucionActual != null && solucionActual.contains(vertice);
 
-			g2.setColor(new Color(0, 0, 0, 30)); // sombra
+			g2.setColor(new Color(0, 0, 0, 30));
 			g2.fillOval(x + 2, y + 3, DIAMETRO_VERTICE, DIAMETRO_VERTICE);
 
 			g2.setColor(enSolucion ? colorSolucion : EstiloInterfaz.VERTICE_RELLENO);
